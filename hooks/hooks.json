@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/pre-bash-tmux-reminder.js\"" }
+        ],
+        "description": "Remind to run long-running commands (npm/cargo/pytest/docker) inside tmux",
+        "id": "pre:bash:tmux-reminder"
+      },
+      {
+        "matcher": "Grep|Bash",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/pre-search-mgrep-nudge.js\"" }
+        ],
+        "description": "Nudge to use mgrep instead of grep/rg",
+        "id": "pre:search:mgrep-nudge"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/post-edit-prettier.js\"" }
+        ],
+        "description": "Auto-format edited JS/TS files with Prettier",
+        "id": "post:edit:prettier"
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/post-edit-tsc.js\"" }
+        ],
+        "description": "Run tsc --noEmit after editing .ts/.tsx files",
+        "id": "post:edit:tsc"
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/post-edit-quality-gate.js\"" }
+        ],
+        "description": "Fast quality checks (lint, debug-log scan, secret scan) after edits",
+        "id": "post:edit:quality-gate"
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/post-edit-design-quality.js\"" }
+        ],
+        "description": "Warn when frontend edits drift toward generic template-looking UI",
+        "id": "post:edit:design-quality"
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/post-edit-strategic-compact.js\"" }
+        ],
+        "description": "Suggest manual /compact at logical intervals (~every 50 edits)",
+        "id": "post:edit:strategic-compact"
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/post-bash-build-analysis.js\"" }
+        ],
+        "description": "Background, non-blocking analysis after build commands",
+        "id": "post:bash:build-analysis"
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/session-start.js\"" }
+        ],
+        "description": "Load previous-session pointer and detect package manager",
+        "id": "session-start:load-context"
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/pre-compact-save.js\"" }
+        ],
+        "description": "Save a state snapshot before context compaction",
+        "id": "pre-compact:save-state"
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/stop-session-summary.js\"" }
+        ],
+        "description": "Persist a session-end snapshot when the working tree changed",
+        "id": "stop:session-summary"
+      },
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/stop-pattern-extraction.js\"" }
+        ],
+        "description": "Seed continuous learning — stage a candidate-pattern note after substantial sessions",
+        "id": "stop:pattern-extraction"
+      }
+    ]
+  }
+}

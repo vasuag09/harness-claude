@@ -1,0 +1,39 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "harness-claude",
+  "description": "A lean, full-SDLC Claude Code harness — Plan → Implement → Verify → Maintain — with subagent orchestration, memory persistence, and an evolution path toward eval loops, retrieval, and multi-agent systems.",
+  "owner": {
+    "name": "Vasu Agrawal",
+    "email": "vasuagrawal1040@gmail.com"
+  },
+  "metadata": {
+    "description": "Personal, isolated, testable Claude Code harness optimizing the full software development lifecycle."
+  },
+  "plugins": [
+    {
+      "name": "harness-claude",
+      "source": "./",
+      "description": "Lean full-SDLC harness: 7 rules, 15 skills, 7 agents, runtime hooks, memory persistence, and subagent token-optimization patterns for TypeScript/JS and Python.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Vasu Agrawal",
+        "email": "vasuagrawal1040@gmail.com"
+      },
+      "license": "MIT",
+      "keywords": [
+        "sdlc",
+        "agents",
+        "skills",
+        "hooks",
+        "tdd",
+        "code-review",
+        "security",
+        "memory",
+        "token-optimization"
+      ],
+      "category": "workflow",
+      "tags": ["sdlc", "agents", "skills", "hooks", "memory", "orchestration"],
+      "strict": false
+    }
+  ]
+}

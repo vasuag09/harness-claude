@@ -1,0 +1,23 @@
+{
+  "//": "OPT-IN SNIPPET — not auto-applied. Merge the keys below into your ~/.claude/settings.json (or a project .claude/settings.json) when you are ready to enable the status line and explanatory output style. Adjust the absolute path to wherever you keep harness-claude.",
+
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/vasuagrawal/Desktop/harness-claude/scripts/statusline.sh"
+  },
+
+  "outputStyle": "explanatory",
+
+  "//permissions-note": "Optional: pre-allow the harness's read-only/dev commands to cut permission prompts while you test. Tune to taste.",
+  "permissions": {
+    "allow": [
+      "Bash(npm test:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pytest:*)",
+      "Bash(npx tsc:*)",
+      "Bash(ruff:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)"
+    ]
+  }
+}

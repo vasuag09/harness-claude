@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+.pnp/
+.yarn/
+
+# Logs / temp
+*.log
+*.tmp
+.DS_Store
+
+# Session memory (generated at runtime, not part of the harness source)
+.claude/sessions/
+.claude/skills-staging/
+harness-sessions/
+
+# Local-only secrets / overrides
+.env
+.env.local
+settings.local.json
+
+# Pre-existing tooling artifacts (not part of this harness)
+.code-graph/

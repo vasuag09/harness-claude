@@ -1,0 +1,32 @@
+{
+  "name": "harness-claude",
+  "version": "0.1.0",
+  "description": "Lean full-SDLC Claude Code harness — Plan, Implement, Verify, Maintain — with subagent orchestration and memory persistence.",
+  "author": {
+    "name": "Vasu Agrawal"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "sdlc",
+    "agents",
+    "skills",
+    "hooks",
+    "memory",
+    "tdd",
+    "code-review",
+    "security"
+  ],
+  "agents": [
+    "./agents/planner.md",
+    "./agents/architect.md",
+    "./agents/code-reviewer.md",
+    "./agents/security-reviewer.md",
+    "./agents/tdd-guide.md",
+    "./agents/build-error-resolver.md",
+    "./agents/refactor-cleaner.md"
+  ],
+  "skills": ["./skills/"],
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": "./.mcp.json"
+}
