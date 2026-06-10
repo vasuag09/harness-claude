@@ -3,7 +3,7 @@
 
   "statusLine": {
     "type": "command",
-    "command": "bash /Users/vasuagrawal/Desktop/harness-claude/scripts/statusline.sh"
+    "command": "bash /path/to/harness-claude/scripts/statusline.sh"
   },
 
   "outputStyle": "explanatory",

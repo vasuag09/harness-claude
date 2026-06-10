@@ -58,8 +58,10 @@ the atomic skills, delegate to subagents, and pause for your input at each gate:
 ## Install & test (isolated)
 
 ```bash
-# 1) Add this repo as a marketplace (from its parent dir or via path)
-claude plugin marketplace add /Users/vasuagrawal/Desktop/harness-claude
+# 1) Add this repo as a marketplace — from GitHub, or via a local clone path
+claude plugin marketplace add vasuag09/harness-claude        # straight from GitHub
+# …or, if you've cloned it locally:
+claude plugin marketplace add /path/to/harness-claude
 
 # 2) In Claude Code, enable the plugin
 /plugin            # find "harness-claude", enable it
@@ -105,11 +107,11 @@ Merge the keys from [`settings.snippet.json`](./settings.snippet.json) into your
 The rules are active inside this repo via `CLAUDE.md` imports. To apply them on **other**
 projects, add to your `~/.claude/CLAUDE.md`:
 ```
-@/Users/vasuagrawal/Desktop/harness-claude/rules/workflow.md
-@/Users/vasuagrawal/Desktop/harness-claude/rules/agents.md
-@/Users/vasuagrawal/Desktop/harness-claude/rules/engineering.md
-@/Users/vasuagrawal/Desktop/harness-claude/rules/security.md
-@/Users/vasuagrawal/Desktop/harness-claude/rules/testing.md
+@/path/to/harness-claude/rules/workflow.md
+@/path/to/harness-claude/rules/agents.md
+@/path/to/harness-claude/rules/engineering.md
+@/path/to/harness-claude/rules/security.md
+@/path/to/harness-claude/rules/testing.md
 ```
 
 ---
