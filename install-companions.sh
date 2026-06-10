@@ -15,26 +15,28 @@ set -euo pipefail
 YES=0
 [[ "${1:-}" == "--yes" ]] && YES=1
 
-# marketplace => plugins to install from it
+# Marketplace SOURCES. `claude plugin marketplace add` accepts a URL, a local
+# path, or a GitHub `owner/repo` — NOT a bare alias. After adding, each marketplace
+# is referenced by the alias its marketplace.json declares (shown in parentheses),
+# which is what the `plugin@alias` entries below use.
 MARKETPLACES=(
-  "claude-code-plugins"
-  "claude-plugins-official"
-  "Mixedbread-Grep"
+  "anthropics/claude-plugins-official"   # alias: claude-plugins-official
+  "mixedbread-ai/mgrep"                  # alias: Mixedbread-Grep
 )
 
 PLUGINS=(
-  # plugin@marketplace                        # purpose
-  "ralph-wiggum@claude-code-plugins"          # loop automation
-  "frontend-design@claude-code-plugins"       # UI/UX patterns
-  "security-guidance@claude-code-plugins"     # security checks
-  "feature-dev@claude-code-plugins"           # feature scaffolding
-  "explanatory-output-style@claude-code-plugins" # explanatory style
-  "code-review@claude-code-plugins"           # PR review
-  "typescript-lsp@claude-plugins-official"    # TS intelligence
-  "pyright-lsp@claude-plugins-official"       # Python types
-  "code-simplifier@claude-plugins-official"   # simplification
-  "context7@claude-plugins-official"          # live documentation
-  "mgrep@Mixedbread-Grep"                     # better search than grep
+  # plugin@alias                                 # purpose
+  "ralph-loop@claude-plugins-official"           # loop automation
+  "frontend-design@claude-plugins-official"      # UI/UX patterns
+  "security-guidance@claude-plugins-official"    # security checks
+  "feature-dev@claude-plugins-official"          # feature scaffolding
+  "explanatory-output-style@claude-plugins-official" # explanatory style
+  "code-review@claude-plugins-official"          # PR review
+  "typescript-lsp@claude-plugins-official"       # TS intelligence
+  "pyright-lsp@claude-plugins-official"          # Python types
+  "code-simplifier@claude-plugins-official"      # simplification
+  "context7@claude-plugins-official"             # live documentation
+  "mgrep@Mixedbread-Grep"                        # better search than grep
 )
 
 echo "harness-claude — companion plugins"
@@ -55,14 +57,16 @@ if [[ "$YES" -ne 1 ]]; then
   [[ "${ans,,}" == "y" || "${ans,,}" == "yes" ]] || { echo "Aborted. No changes made."; exit 0; }
 fi
 
+# Note: errors are shown (not swallowed) so a failure is visible instead of silent.
+# "already added / already installed" is a normal, non-fatal outcome.
 for mp in "${MARKETPLACES[@]}"; do
   echo ">> Ensuring marketplace: $mp"
-  claude plugin marketplace add "$mp" 2>/dev/null || echo "   (already added or add manually)"
+  claude plugin marketplace add "$mp" || echo "   (already added, or add failed above — check the error)"
 done
 
 for p in "${PLUGINS[@]}"; do
   echo ">> Installing plugin: $p"
-  claude plugin install "$p" 2>/dev/null || echo "   (skipped — install manually via /plugin if needed)"
+  claude plugin install "$p" || echo "   (already installed, or install failed above — check the error)"
 done
 
 echo

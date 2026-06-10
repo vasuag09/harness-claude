@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Usage guide
+    url: https://github.com/vasuag09/harness-claude/blob/master/docs/USAGE.md
+    about: How to install and run the full pipeline — read this first.
+  - name: Troubleshooting & FAQ
+    url: https://github.com/vasuag09/harness-claude/blob/master/docs/TROUBLESHOOTING.md
+    about: Common issues (hooks not firing, slow tsc, MCP, git boundary) and fixes.

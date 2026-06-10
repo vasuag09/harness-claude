@@ -10,6 +10,21 @@ Stack focus: **TypeScript/JS (React, Next, Vercel)** and **Python**.
 
 ---
 
+## Documentation
+
+| Guide | Read it for |
+|-------|-------------|
+| [docs/USAGE.md](./docs/USAGE.md) | Install → full pipeline → reuse-an-existing-codebase → common scenarios |
+| [docs/SKILLS.md](./docs/SKILLS.md) | Every command + agent, what each does, what it delegates to |
+| [docs/HOOKS.md](./docs/HOOKS.md) | Exactly what runs on your machine, and how to disable any hook |
+| [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) | Hooks not firing, slow `tsc`, MCP, git boundary — fixes |
+| [CONTRIBUTING.md](./CONTRIBUTING.md) | Adding skills/hooks, portability rules, PR checklist |
+| [ROADMAP.md](./ROADMAP.md) | Where this is going (eval loops → retrieval → multi-agent → computer-use) |
+
+**New here? Start with [docs/USAGE.md](./docs/USAGE.md).**
+
+---
+
 ## Why it's structured as a plugin
 
 It lives in its own repo and installs as a Claude Code **plugin/marketplace**, so you can:
@@ -55,6 +70,21 @@ the atomic skills, delegate to subagents, and pause for your input at each gate:
 
 ---
 
+## Prerequisites
+
+| Requirement | Why | Without it |
+|-------------|-----|------------|
+| **Claude Code** ≥ 2.x | Host for the plugin | — |
+| **Node.js** ≥ 18 | All runtime hooks are Node scripts | Hooks no-op; rest of the harness works |
+| **git** | Phase gates, `/ship`, session snapshots | Most value is inside a repo |
+| `bash` + `jq` *(optional)* | Status line only | Status line degrades gracefully |
+
+Project tools (`prettier`, `eslint`, `tsc`, `ruff`, `pytest`) are **not** required — the
+hooks that use them skip silently when absent. See [docs/HOOKS.md](./docs/HOOKS.md) for
+exactly what runs on your machine.
+
+---
+
 ## Install & test (isolated)
 
 ```bash
@@ -94,9 +124,11 @@ when ready. Your real `~/.claude` stays untouched until you do.
 ./install-companions.sh          # prints the plan, asks before changing anything
 ./install-companions.sh --yes    # non-interactive
 ```
-Installs (if missing): ralph-wiggum, frontend-design, security-guidance, feature-dev,
+Installs (if missing): ralph-loop, frontend-design, security-guidance, feature-dev,
 explanatory-output-style, code-review, typescript-lsp, pyright-lsp, code-simplifier,
-context7, mgrep. Keep **<10 plugins/MCPs enabled** at once to protect your context window.
+context7, mgrep. The script needs a **local clone** (it's a `.sh` file); for the no-clone
+manual route and what each companion does, see [docs/USAGE.md](./docs/USAGE.md#7-installing-the-extras-companion-plugins--optional).
+Keep **<10 plugins/MCPs enabled** at once to protect your context window.
 
 ### Status line + output style + permissions
 Merge the keys from [`settings.snippet.json`](./settings.snippet.json) into your
