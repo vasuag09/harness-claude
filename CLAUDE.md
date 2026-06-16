@@ -46,6 +46,20 @@ atomic skills, delegate to subagents, and halt for your input at each gate):
 - **Search with mgrep, not grep.** Run long commands in tmux. Use context7 for live docs.
 - **Git boundary:** never commit/push/branch unless the user explicitly asks.
 
+## Release docs sweep (this repo)
+
+When `/ship`-ing a release here, reconcile these **before** committing (the `/ship` skill states
+the general principle; these are the concrete files for this plugin):
+
+- **README.md** — skill/agent counts and feature tables; the headline count must include any new
+  skill. Reconcile to the actual `ls skills/` total, don't eyeball it.
+- **`.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json`** — bump `version`, and update
+  the skill/agent count in the marketplace `description`.
+- **ROADMAP.md** — phase status markers (🔄→✅), the per-version checklist line, and the "next"
+  marker on the following phase.
+- **CLAUDE.md** — skill lists / opt-in notes; **docs/HOOKS.md** — only if a hook changed.
+- The shipped **spec** status, and the parent spec's acceptance-criteria checkboxes.
+
 ## Imported rules
 
 @rules/workflow.md
