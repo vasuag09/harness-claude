@@ -1,6 +1,6 @@
 ---
 name: review
-description: Review changed code for quality, correctness, and maintainability before merge. Use immediately after implementing or modifying code. Delegates to the code-reviewer agent. First gate of the Verify phase.
+description: Review changed code for quality, correctness, and maintainability before merge. Use immediately after implementing or modifying code. Delegates to the harness-claude:code-reviewer agent. First gate of the Verify phase.
 ---
 
 # /review — code quality & correctness
@@ -8,7 +8,7 @@ description: Review changed code for quality, correctness, and maintainability b
 Goal: catch bugs and quality issues before they merge.
 
 ## Do this
-1. **Delegate to `code-reviewer`** with the diff in scope (`git diff`, `git diff
+1. **Delegate to `harness-claude:code-reviewer`** with the diff in scope (`git diff`, `git diff
    --staged`, or the files named).
 2. The reviewer checks correctness, edge cases, error handling, naming, complexity,
    duplication, adherence to harness rules, and test coverage — reporting `file:line`
@@ -20,5 +20,5 @@ Goal: catch bugs and quality issues before they merge.
 4. Apply fixes, then re-review the changed lines if Critical/High were found.
 
 ## Exit criterion
-No Critical or High findings outstanding. Then `/security-review` (or run both in
+No Critical or High findings outstanding. Then `/harness-claude:security-review` (or run both in
 parallel if the change is security-sensitive).

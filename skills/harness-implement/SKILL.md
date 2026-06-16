@@ -6,16 +6,16 @@ description: Orchestrate the entire IMPLEMENT phase — test-driven implementati
 # /harness-implement — run the Implement phase
 
 Thin orchestrator over the Implement skills. Requires an approved plan from
-`/harness-plan` (or `/plan`). Refuse to start without one for non-trivial work.
+`/harness-claude:harness-plan` (or `/harness-claude:plan`). Refuse to start without one for non-trivial work.
 
 ## Sequence
 
 1. For each plan phase, in order:
-   - **`/implement`** — **delegate to the `tdd-guide` agent**: failing test (RED) →
+   - **`/harness-claude:implement`** — **delegate to the `harness-claude:tdd-guide` agent**: failing test (RED) →
      minimum code (GREEN) → refactor, against the phase's acceptance criteria.
    - Let the format/typecheck/quality hooks run; act on what they surface.
-   - If the build/types break and the fix isn't obvious → **`/build-fix`** (delegate to
-     the `build-error-resolver` agent), minimal diffs only.
+   - If the build/types break and the fix isn't obvious → **`/harness-claude:build-fix`** (delegate to
+     the `harness-claude:build-error-resolver` agent), minimal diffs only.
    - Confirm the phase's **exit check** (tests green, build clean) before the next phase.
 
 2. **Plan-divergence gate:** if reality contradicts the plan (a phase is wrong, missing,
@@ -31,4 +31,4 @@ Thin orchestrator over the Implement skills. Requires an approved plan from
 
 ## Output
 Phase-by-phase summary (what was built, tests added, build status). Then hand off to
-`/harness-verify`.
+`/harness-claude:harness-verify`.

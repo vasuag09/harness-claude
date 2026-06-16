@@ -13,27 +13,27 @@ skills don't already do.
 ## Flow
 
 ```
-/harness-plan ──▶ [checkpoint] ──▶ /harness-implement ──▶ [checkpoint]
-   ──▶ /harness-verify ──▶ [checkpoint] ──▶ /harness-maintain (optional)
+/harness-claude:harness-plan ──▶ [checkpoint] ──▶ /harness-claude:harness-implement ──▶ [checkpoint]
+   ──▶ /harness-claude:harness-verify ──▶ [checkpoint] ──▶ /harness-claude:harness-maintain (optional)
 ```
 
-1. **Plan** — run `/harness-plan`. At its HALTs, get the user's answers/approvals.
+1. **Plan** — run `/harness-claude:harness-plan`. At its HALTs, get the user's answers/approvals.
    → **CHECKPOINT:** show the approved spec + plan (+ ADR). Wait for "go" before coding.
 
-2. **Implement** — run `/harness-implement` against the approved plan.
+2. **Implement** — run `/harness-claude:harness-implement` against the approved plan.
    → **CHECKPOINT:** report what was built and test status. Wait for "go" before verify.
 
-3. **Verify** — run `/harness-verify`. Halt on Critical/High; stop at the git boundary.
+3. **Verify** — run `/harness-claude:harness-verify`. Halt on Critical/High; stop at the git boundary.
    → **CHECKPOINT:** show review/security verdicts, coverage, observed-working evidence.
 
-4. **Maintain** — **offer** `/harness-maintain`. Run it only if the user wants cleanup now.
+4. **Maintain** — **offer** `/harness-claude:harness-maintain`. Run it only if the user wants cleanup now.
 
 ## Rules
 - Honor every HALT and CHECKPOINT — this is a guided pipeline, not an autonomous run.
-- Delegate heavy work to subagents; `/save-session` at each checkpoint so a long feature
+- Delegate heavy work to subagents; `/harness-claude:save-session` at each checkpoint so a long feature
   survives compaction or a new session.
-- Never run git write operations. `/harness-verify` ends at "ready to commit/PR."
-- For a small change, a single phase orchestrator (or atomic skill) is lighter — `/harness`
+- Never run git write operations. `/harness-claude:harness-verify` ends at "ready to commit/PR."
+- For a small change, a single phase orchestrator (or atomic skill) is lighter — `/harness-claude:harness`
   is for full features.
 
 ## Output

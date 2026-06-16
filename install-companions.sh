@@ -42,6 +42,9 @@ PLUGINS=(
 echo "harness-claude — companion plugins"
 echo "=================================="
 echo
+echo "These are OPTIONAL enhancers. The harness is self-contained and degrades to"
+echo "built-in tools without them (mgrep/graph -> Grep/Glob, context7 -> primary docs)."
+echo
 echo "Marketplaces to ensure are added:"
 printf '  - %s\n' "${MARKETPLACES[@]}"
 echo

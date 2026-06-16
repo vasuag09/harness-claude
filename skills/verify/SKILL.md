@@ -15,11 +15,11 @@ necessary, not sufficient.
    the browser (Playwright/Chrome) and capture a screenshot of the working state.
 3. Check the unhappy paths the spec named: invalid input, empty/error states, edge
    cases. Confirm errors are handled and messages are sane.
-4. Note anything observed that tests missed → add a regression test (back to `/test`).
+4. Note anything observed that tests missed → add a regression test (back to `/harness-claude:test`).
 
 ## Output
 A short evidence note: what you ran, what you observed per criterion (pass/fail),
 screenshots/log snippets for the key states.
 
 ## Exit criterion
-Every acceptance criterion observably works in the running app. Then `/ship`.
+Every acceptance criterion observably works in the running app. Then `/harness-claude:ship`.

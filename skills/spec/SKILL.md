@@ -15,14 +15,14 @@ testable spec.
    - **Problem / why** — the user-visible outcome wanted.
    - **Scope** — what's in, and explicitly what's out.
    - **Acceptance criteria** — concrete, testable bullets ("given X, when Y, then Z").
-     These become the tests in `/implement`.
+     These become the tests in `/harness-claude:implement`.
    - **Constraints** — perf, security, compatibility, deadlines, non-functionals.
    - **Open questions** — anything blocking, with your recommended default.
 3. Keep it to one screen. This is a spec, not a novel.
 
 ## Output
 Write the spec to the conversation (and, for multi-session work, into the session file
-via `/save-session`). Format:
+via `/harness-claude:save-session`). Format:
 
 ```
 # Spec: <title>
@@ -36,4 +36,4 @@ via `/save-session`). Format:
 
 ## Exit criterion
 Acceptance criteria are concrete and testable, and no blocking open question remains.
-Then proceed to `/research`.
+Then proceed to `/harness-claude:research`.

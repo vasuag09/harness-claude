@@ -1,6 +1,6 @@
 ---
 name: security-review
-description: Security scan of changed code before merge — OWASP Top-10, injection, secrets, access control. Use for any change touching auth, input, queries, file I/O, external calls, crypto, or secrets. Delegates to the security-reviewer agent.
+description: Security scan of changed code before merge — OWASP Top-10, injection, secrets, access control. Use for any change touching auth, input, queries, file I/O, external calls, crypto, or secrets. Delegates to the harness-claude:security-reviewer agent.
 ---
 
 # /security-review — security gate
@@ -8,7 +8,7 @@ description: Security scan of changed code before merge — OWASP Top-10, inject
 Goal: no Critical/High vulnerability and no leaked secret ships.
 
 ## Do this
-1. **Delegate to `security-reviewer`** with the diff or named files.
+1. **Delegate to `harness-claude:security-reviewer`** with the diff or named files.
 2. It hunts (with exploit paths, not just patterns): hardcoded secrets, injection
    (SQL/command/deserialization), XSS, broken access control, SSRF, path traversal,
    weak crypto, missing validation, error leakage, vulnerable deps. It also runs a
@@ -21,4 +21,4 @@ Always for auth/payments/user-data/file/external-call changes. For purely intern
 non-sensitive refactors, a lighter pass is fine — but never skip the secret check.
 
 ## Exit criterion
-Verdict = pass (no Critical/High), secret check clean. Then `/test`.
+Verdict = pass (no Critical/High), secret check clean. Then `/harness-claude:test`.

@@ -12,7 +12,7 @@ Goal: every acceptance criterion is covered and the suite is green.
 2. Run the **full** suite (not just the files you touched) to catch regressions.
    Run long suites inside tmux.
 3. Run coverage. Compare against the spec's acceptance criteria:
-   - Any criterion without a test → delegate to `tdd-guide` to add it (test-first).
+   - Any criterion without a test → delegate to `harness-claude:tdd-guide` to add it (test-first).
    - Coverage < 80% on changed code → add tests for the gaps.
 4. For web, add/refresh e2e for any critical flow the change affects (Playwright);
    add visual regression for visual-heavy UI.
@@ -20,4 +20,4 @@ Goal: every acceptance criterion is covered and the suite is green.
 
 ## Exit criterion
 Suite green, coverage ≥ 80% on changed code, every acceptance criterion has a test.
-Then `/verify`.
+Then `/harness-claude:verify`.

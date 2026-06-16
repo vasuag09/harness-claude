@@ -10,21 +10,21 @@ before it can merge.
 
 ## Sequence
 
-1. **Review** — run `/review` (delegate to `code-reviewer`) and, for any change touching
-   auth/input/queries/files/external-calls/crypto/secrets, `/security-review` (delegate
-   to `security-reviewer`). Run these **two in parallel** when the change is
+1. **Review** — run `/harness-claude:review` (delegate to `harness-claude:code-reviewer`) and, for any change touching
+   auth/input/queries/files/external-calls/crypto/secrets, `/harness-claude:security-review` (delegate
+   to `harness-claude:security-reviewer`). Run these **two in parallel** when the change is
    security-sensitive; otherwise review first, then security.
    → **HALT on any Critical or High finding** — fix, then re-review the changed lines.
 
-2. **`/test`** — run the full suite (in tmux if long) + coverage. Every acceptance
+2. **`/harness-claude:test`** — run the full suite (in tmux if long) + coverage. Every acceptance
    criterion must have a test; coverage ≥ 80% on changed code. Add missing tests via
-   `tdd-guide`.
+   `harness-claude:tdd-guide`.
 
-3. **`/verify`** — launch the app/feature and **observe each acceptance criterion working**
+3. **`/harness-claude:verify`** — launch the app/feature and **observe each acceptance criterion working**
    in reality (browser screenshot for web; exercise unhappy paths). Tests passing is
    necessary, not sufficient. Anything tests missed → add a regression test (back to step 2).
 
-4. **`/ship`** — sync docs, draft the change summary from the full diff, confirm
+4. **`/harness-claude:ship`** — sync docs, draft the change summary from the full diff, confirm
    build/types/lint/tests green and no secrets/debug logs.
    → **HALT at the git boundary:** do NOT commit/push/PR. Report "ready — say the word."
 
@@ -35,4 +35,4 @@ before it can merge.
 
 ## Output
 Verify summary: review verdict, security verdict, coverage %, observed-working evidence,
-docs synced, "ready to commit/PR." Then optionally `/harness-maintain`.
+docs synced, "ready to commit/PR." Then optionally `/harness-claude:harness-maintain`.

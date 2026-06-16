@@ -130,6 +130,27 @@ context7, mgrep. The script needs a **local clone** (it's a `.sh` file); for the
 manual route and what each companion does, see [docs/USAGE.md](./docs/USAGE.md#7-installing-the-extras-companion-plugins--optional).
 Keep **<10 plugins/MCPs enabled** at once to protect your context window.
 
+### What's bundled vs. what's optional
+
+The harness is **self-contained**: every skill and agent it ships references its own
+components by their namespaced names (`harness-claude:planner`, `/harness-claude:plan`),
+so they resolve deterministically no matter what else is installed in your `~/.claude`.
+Companions are **enhancers, not requirements** — when one is absent the skills fall back
+to built-in tools and say so.
+
+| Item | Status | Fallback when absent |
+|------|--------|----------------------|
+| 7 agents (`harness-claude:*`) | **Bundled** | — (always present) |
+| 20 skills (`/harness-claude:*`) | **Bundled** | — (always present) |
+| 3 MCPs (memory · sequential-thinking · magic) | **Bundled**, load only when enabled | harness works without them |
+| `mgrep` | Optional companion | `Grep` / `Glob` |
+| `context7` | Optional companion | library's primary docs / web |
+| knowledge graph | Optional companion | `Grep` / `Glob` |
+| LSP / analyzer plugins (ts/pyright/knip/…) | Optional companion | hooks skip silently |
+
+A reference-integrity check (`scripts/check-reference-integrity.sh`, run in CI) fails the
+build if any skill/agent ever reintroduces a bare, collision-prone reference.
+
 ### Status line + output style + permissions
 Merge the keys from [`settings.snippet.json`](./settings.snippet.json) into your
 `~/.claude/settings.json` (adjust the absolute path). The status line shows:

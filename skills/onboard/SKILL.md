@@ -10,7 +10,8 @@ Goal: understand a codebase enough to work in it, cheaply — without reading ev
 ## Do this
 1. **Structure first** — read the manifests (package.json / pyproject / README) and the
    top-level tree. Identify the stack, scripts, and entry points.
-2. **Use the graph / mgrep**, not brute-force file reads: find the main modules, the
+2. **Use the graph / `mgrep`** (or `Grep`/`Glob` if those are unavailable), not
+   brute-force file reads: find the main modules, the
    request/data flow, and the seams (where layers meet).
 3. **Conventions** — note the patterns the repo already uses (naming, error handling,
    state management, test layout). Future work must match the grain.
