@@ -24,6 +24,7 @@ and dependency-free.
 
 | ID | Event | Trigger | What it does | Needs |
 |----|-------|---------|--------------|-------|
+| `pre:tool:trace` | PreToolUse | every tool call | Logs which skills/subagents/MCP tools fire to `.claude/traces/<date>.jsonl` (only `{ts, tool_name, kind, subagent_type?}` — never args/secrets) | — |
 | `pre:bash:tmux-reminder` | PreToolUse | `Bash` | Reminds you to run long commands (npm/cargo/pytest/docker) inside tmux | — |
 | `pre:search:mgrep-nudge` | PreToolUse | `Grep`, `Bash` | Nudges you toward `mgrep` instead of `grep`/`rg` | — |
 | `post:edit:prettier` | PostToolUse | `Edit` | Auto-formats edited JS/TS files | Prettier in project (else skips) |
@@ -74,6 +75,11 @@ when outside a repo):
 
 - `.claude/sessions/<date>.md` — session snapshots (`save-session`, Stop, PreCompact)
 - `.claude/skills-staging/` — staged candidate patterns (never auto-applied; you approve)
+- `.claude/traces/<date>.jsonl` — run-trace: one minimal line per tool call
+  (`{ts, tool_name, kind, subagent_type?}`). No tool arguments, commands, or content are
+  recorded, so secrets can't leak. Audit a run with
+  `node scripts/eval/trace-report.js` (summary) or
+  `node scripts/eval/trace-report.js --assert-namespace` (verify subagents are host-isolated).
 
-Both paths are in `.gitignore` so they don't pollute your repo. No hook sends data off your
-machine.
+All three paths are in `.gitignore` so they don't pollute your repo. No hook sends data off
+your machine.

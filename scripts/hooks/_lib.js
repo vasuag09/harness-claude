@@ -69,9 +69,13 @@ function fileExists(p) {
 // Resolve where session/staging state lives: project .claude when in a git repo,
 // else a harness dir under the user's home.
 function stateDir(cwd, sub) {
-  const inRepo = sh('git rev-parse --is-inside-work-tree', { cwd }).ok;
+  // cwd is supplied by the Claude Code hook payload. Require an absolute path so a
+  // relative value (e.g. "../../tmp") can't redirect state writes outside the project
+  // via "../" traversal; fall back to the real process cwd otherwise.
+  const root = cwd && path.isAbsolute(cwd) ? cwd : process.cwd();
+  const inRepo = sh('git rev-parse --is-inside-work-tree', { cwd: root }).ok;
   const base = inRepo
-    ? path.join(cwd, '.claude')
+    ? path.join(root, '.claude')
     : path.join(os.homedir(), '.claude', 'harness-claude');
   const dir = path.join(base, sub);
   try { fs.mkdirSync(dir, { recursive: true }); } catch {}

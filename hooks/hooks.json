@@ -3,6 +3,13 @@
   "hooks": {
     "PreToolUse": [
       {
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/pre-tool-trace.js\"" }
+        ],
+        "description": "Run-trace: log which skills/subagents/MCP tools fire to .claude/traces/<date>.jsonl (no args/secrets)",
+        "id": "pre:tool:trace"
+      },
+      {
         "matcher": "Bash",
         "hooks": [
           { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/pre-bash-tmux-reminder.js\"" }

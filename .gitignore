@@ -11,6 +11,7 @@ node_modules/
 # Session memory (generated at runtime, not part of the harness source)
 .claude/sessions/
 .claude/skills-staging/
+.claude/traces/
 harness-sessions/
 
 # Local-only secrets / overrides
