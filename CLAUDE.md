@@ -28,9 +28,9 @@ atomic skills, delegate to subagents, and halt for your input at each gate):
 
 - **rules/** — always-on guidance (engineering, security, testing, typescript, python, workflow, agents)
 - **skills/** — the 15 pipeline drivers you invoke as `/spec`, `/plan`, `/review`, ...
-  (plus two opt-in eval skills: `/eval` checkpoints a change against its spec's acceptance
-  criteria, and `/extract` turns a repeatable workflow into a staged skill proposal — both
-  off by default)
+  (plus three opt-in eval skills: `/eval` checkpoints a change against its spec's acceptance
+  criteria, `/extract` turns a repeatable workflow into a staged skill proposal, and
+  `/benchmark` measures whether a component earns its keep via pass@k/pass^k — all off by default)
 - **agents/** — 7 scoped subagents the skills delegate to
 - **hooks/** + **scripts/hooks/** — runtime automations (tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence)
 - **.mcp.json** — memory · sequential-thinking · magic (load only when the plugin is enabled)

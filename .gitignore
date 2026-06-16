@@ -12,6 +12,7 @@ node_modules/
 .claude/sessions/
 .claude/skills-staging/
 .claude/traces/
+.claude/eval/
 harness-sessions/
 
 # Local-only secrets / overrides

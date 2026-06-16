@@ -267,6 +267,43 @@ else
   bad "stop-pattern-extraction.js requires something other than _lib.js: $hreqs"
 fi
 
+echo "Phase 3 — R5 result-driven benchmark wiring (v0.6 AC-B5)"
+
+# extract-rubric.js R5 now READS a benchmark artifact (.claude/eval/benchmarks/<slug>.json)
+# if /benchmark produced one. Run from an isolated git repo so the lookup resolves there.
+BREPO="$TMP/bench-repo"; mkdir -p "$BREPO/.claude/eval/benchmarks"
+( cd "$BREPO" && git init -q && git config user.email t@t && git config user.name t )
+
+# A valid draft named to match a planted PASSING artifact -> R5 = PASS (R4 still MANUAL -> exit 2).
+PASSDRAFT="$BREPO/draft-pass.md"
+printf -- '---\nname: bench-pass\ndescription: draft with a passing benchmark artifact.\n---\n# h\n## Do this\n1. a\n2. b\n' > "$PASSDRAFT"
+printf '{"component":"bench-pass","pass":true}\n' > "$BREPO/.claude/eval/benchmarks/bench-pass.json"
+OUT="$(cd "$BREPO" && node "$RB" "$PASSDRAFT" 2>&1)"; EC=$?
+if printf '%s' "$OUT" | grep -qE 'R5.*PASS'; then ok "R5 reads passing benchmark artifact -> PASS"; else bad "R5 passing artifact -> PASS ($OUT)"; fi
+if [ "$EC" = "2" ]; then ok "passing benchmark but R4 still MANUAL -> exit 2 (no auto-approve)"; else bad "R5 PASS still gated by R4 MANUAL -> exit 2 (got $EC)"; fi
+
+# A FAILING artifact -> R5 = FAIL -> exit 1.
+FAILDRAFT="$BREPO/draft-fail.md"
+printf -- '---\nname: bench-fail\ndescription: draft with a failing benchmark artifact.\n---\n# h\n## Do this\n1. a\n2. b\n' > "$FAILDRAFT"
+printf '{"component":"bench-fail","pass":false}\n' > "$BREPO/.claude/eval/benchmarks/bench-fail.json"
+OUT="$(cd "$BREPO" && node "$RB" "$FAILDRAFT" 2>&1)"; EC=$?
+if printf '%s' "$OUT" | grep -qE 'R5.*FAIL'; then ok "R5 reads failing benchmark artifact -> FAIL"; else bad "R5 failing artifact -> FAIL ($OUT)"; fi
+if [ "$EC" = "1" ]; then ok "failing benchmark -> exit 1"; else bad "failing benchmark -> exit 1 (got $EC)"; fi
+
+# No artifact -> R5 degrades to MANUAL (gate stays deterministic, never blocks).
+NODRAFT="$BREPO/draft-none.md"
+printf -- '---\nname: bench-none\ndescription: draft with no benchmark artifact.\n---\n# h\n## Do this\n1. a\n2. b\n' > "$NODRAFT"
+OUT="$(cd "$BREPO" && node "$RB" "$NODRAFT" 2>&1)"; EC=$?
+if printf '%s' "$OUT" | grep -qE 'R5.*MANUAL'; then ok "R5 with no artifact -> MANUAL (graceful)"; else bad "R5 no artifact -> MANUAL ($OUT)"; fi
+
+# Symlink escape: an artifact symlinked outside the benchmarks dir is ignored -> MANUAL.
+OUTART="$TMP/outside-bench.json"; printf '{"pass":true}\n' > "$OUTART"
+SYMDRAFT="$BREPO/draft-sym.md"
+printf -- '---\nname: bench-sym\ndescription: draft whose artifact is a planted symlink.\n---\n# h\n## Do this\n1. a\n2. b\n' > "$SYMDRAFT"
+ln -s "$OUTART" "$BREPO/.claude/eval/benchmarks/bench-sym.json"
+OUT="$(cd "$BREPO" && node "$RB" "$SYMDRAFT" 2>&1)"; EC=$?
+if printf '%s' "$OUT" | grep -qE 'R5.*MANUAL'; then ok "symlinked artifact rejected -> R5 MANUAL"; else bad "symlinked artifact rejected ($OUT)"; fi
+
 echo
 echo "extract tests: $pass passed, $fail failed"
 [ "$fail" = "0" ]

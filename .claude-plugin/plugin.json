@@ -1,6 +1,6 @@
 {
   "name": "harness-claude",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Lean full-SDLC Claude Code harness — Plan, Implement, Verify, Maintain — with subagent orchestration and memory persistence.",
   "author": {
     "name": "Vasu Agrawal"

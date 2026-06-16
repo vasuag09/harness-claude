@@ -34,8 +34,10 @@ staging rule). The output is a **proposal**, not a live skill.
    It scores five criteria and exits **0** (all PASS, none manual — not reachable until the
    AC-E3 benchmark lands) · **1** (a check FAILED) · **2** (no FAIL, MANUAL criteria remain).
    - **R1–R3** are deterministic (frontmatter present · ≥2 steps · name not a duplicate).
-   - **R4** (genuinely reusable?) and **R5** (empirical value — the AC-E3 benchmark seam,
-     inert today) are **MANUAL** — the script never auto-approves a skill.
+   - **R4** (genuinely reusable?) is always **MANUAL** — the script never auto-approves a skill.
+   - **R5** (empirical value) is **result-driven**: if `/benchmark` produced
+     `.claude/eval/benchmarks/<name>.json` for this draft, R5 reports PASS/FAIL from it;
+     otherwise it degrades to MANUAL. Run `/benchmark --component <draft-name>` to close it.
 4. **On FAIL (exit 1):** fix the draft (add frontmatter, add steps, or rename to avoid the
    collision) and re-run. Do not stage a draft that FAILs.
 5. **Adjudicate MANUAL (exit 2 — the expected happy path):** judge R4/R5 yourself with
@@ -56,8 +58,9 @@ staging rule). The output is a **proposal**, not a live skill.
 
 ## Notes
 - Self-contained: rubric + detector are pure Node, no companions (mgrep/graph/context7).
-- The AC-E3 benchmark agent (fork + worktree + diff, pass@k/pass^k) plugs into the R5 seam
-  in `extract-rubric.js` later; until then R5 is MANUAL and never blocks.
+- The AC-E3 benchmark (`/benchmark`, fork + worktree, pass@k/pass^k) feeds the R5 seam in
+  `extract-rubric.js`: it reads the benchmark artifact if present, else R5 stays MANUAL and
+  never blocks.
 
 ## Exit criterion
 A proposal (`SKILL.md` draft + `eval.md`) is staged under `.claude/skills-staging/<slug>/`,

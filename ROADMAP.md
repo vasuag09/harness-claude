@@ -16,11 +16,11 @@ phases without rework. Each phase builds on the previous one's primitives.
 - ✅ Checkpoint evals (v0.4.0) — `/eval` verifies a change against its spec's acceptance criteria.
 - ✅ Extract-and-evaluate (v0.5.0) — the Stop "candidate pattern" seed is now a real flow:
   trace-driven detector → `/extract` skill → rubric gate, staging proposals for human approval.
+- ✅ Benchmarking harness (v0.6.0) — `/benchmark`: fork + worktree, with vs. without a
+  component; reports pass@k (need it to work once) and pass^k (need consistency). Result-driven,
+  filling the extract rubric's R5 seam. *(AC-E3)*
 - ⬜ Continuous evals (full suite + lint on an interval / after major changes). *(AC-E2)*
-- ⬜ Benchmarking harness: fork + worktree + diff, with vs. without a component; report
-  pass@k (need it to work once) and pass^k (need consistency). Plugs into the extract
-  rubric's R5 seam. *(AC-E3)*
-- **Adds:** an `eval/` module + `/eval` + `/extract` skills + a benchmark agent.
+- **Adds:** an `eval/` module + `/eval` + `/extract` + `/benchmark` skills.
 
 ## Phase 3 — Retrieval systems
 - Codemaps + semantic search over the codebase (graph-backed) to cut exploration tokens.

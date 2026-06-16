@@ -10,11 +10,14 @@
 //   R2 steps       — draft has >=2 numbered procedure steps                   (FAIL if not)
 //   R3 uniqueness  — draft `name` is not an exact dup of an existing skill    (FAIL if dup)
 //   R4 reusable    — "is this genuinely a repeatable workflow worth a skill?" (always MANUAL)
-//   R5 benchmark   — empirical value via the AC-E3 benchmark agent            (MANUAL until E3)
+//   R5 benchmark   — empirical value from a benchmark result artifact         (MANUAL if none)
 //
-// AC-E3 SEAM (AC-X5): benchmark(draft) is the single, documented insertion point where the
-// future benchmark agent plugs in. It returns null today, so R5 degrades to MANUAL and never
-// blocks. When AC-E3 lands, return { pass: boolean } here and R5 becomes a real PASS/FAIL.
+// AC-E3 SEAM (AC-X5): benchmark(draft) is the documented insertion point for the AC-E3
+// benchmark agent. It is now RESULT-DRIVEN (v0.6): it reads the artifact that
+// `scripts/eval/benchmark.js` writes at `.claude/eval/benchmarks/<draft-slug>.json` and
+// returns { pass } when present; absent/unparseable -> null, so R5 degrades to MANUAL and
+// never blocks. The gate stays deterministic, fast, and offline — the heavy, model-cost-
+// bearing k-trial run lives in the explicit `/benchmark` step, not in this gate.
 //
 // A valid draft therefore lands on exit 2 (R4/R5 MANUAL) by design: the deterministic gate
 // can REJECT (FAIL) a draft but never AUTO-APPROVE one — promotion stays a human decision
@@ -104,10 +107,30 @@ function existingSkillNames() {
   return names;
 }
 
-// AC-E3 SEAM — inert until the benchmark agent exists. Return null = "not measured".
-// Future: fork a worktree, run a task with/without the proposed skill, return { pass }.
-function benchmark(/* draft */) {
-  return null;
+// Filesystem-safe slug — MUST match benchmark.js slugify() so a benchmark run for component
+// "<draft-name>" lands where this lookup expects it.
+function benchSlug(s) {
+  return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+// AC-E3 SEAM — RESULT-DRIVEN (v0.6). Read the benchmark artifact for this draft, if one was
+// produced by `/benchmark`. Returns { pass } when present & valid, else null ("not measured"
+// -> R5 stays MANUAL). Symlink-safe: an artifact whose real path escapes the benchmarks dir
+// is ignored, so a hostile .claude/eval/benchmarks/ can't redirect the read.
+function benchmark(draft) {
+  if (!draft || !draft.name) return null;
+  const dir = stateDir(process.cwd(), path.join('eval', 'benchmarks'));
+  let dirReal = '';
+  try { dirReal = fs.realpathSync(dir); } catch { return null; }
+  const p = path.join(dir, `${benchSlug(draft.name)}.json`);
+  if (!fileExists(p)) return null;
+  let real = '';
+  try { real = fs.realpathSync(p); } catch { return null; }
+  if (!real.startsWith(dirReal + path.sep)) return null; // no symlink escape
+  try {
+    const data = JSON.parse(fs.readFileSync(p, 'utf8'));
+    return typeof data.pass === 'boolean' ? { pass: data.pass } : null;
+  } catch { return null; }
 }
 
 function evaluate(draft) {
@@ -131,8 +154,8 @@ function evaluate(draft) {
 
   const bench = benchmark(draft);
   out.push(bench == null
-    ? { id: 'R5', status: 'MANUAL', label: 'empirical value (benchmark seam — AC-E3 pending)' }
-    : { id: 'R5', status: bench.pass ? 'PASS' : 'FAIL', label: 'empirical value (benchmark)' });
+    ? { id: 'R5', status: 'MANUAL', label: 'empirical value (no benchmark artifact — run /benchmark)' }
+    : { id: 'R5', status: bench.pass ? 'PASS' : 'FAIL', label: `empirical value (benchmark: ${bench.pass ? 'earns keep' : 'no gain'})` });
 
   return out;
 }
