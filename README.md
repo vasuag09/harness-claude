@@ -41,7 +41,7 @@ It lives in its own repo and installs as a Claude Code **plugin/marketplace**, s
 | Layer | Where | Count | Role |
 |-------|-------|-------|------|
 | Rules | `rules/` | 7 | always-on guidance (cited by skills; imported by `CLAUDE.md`) |
-| Skills | `skills/<name>/SKILL.md` | 20 | 15 atomic `/spec … /ship` drivers + 5 phase orchestrators |
+| Skills | `skills/<name>/SKILL.md` | 24 | 15 atomic `/spec … /ship` drivers + 5 phase orchestrators + 4 opt-in eval (`/eval` `/extract` `/benchmark` `/health`) |
 | Agents | `agents/*.md` | 7 | scoped subagents the skills delegate to |
 | Hooks | `hooks/hooks.json` + `scripts/hooks/` | — | tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence |
 | MCPs | `.mcp.json` | 3 | memory · sequential-thinking · magic (load only when enabled) |
@@ -141,7 +141,7 @@ to built-in tools and say so.
 | Item | Status | Fallback when absent |
 |------|--------|----------------------|
 | 7 agents (`harness-claude:*`) | **Bundled** | — (always present) |
-| 20 skills (`/harness-claude:*`) | **Bundled** | — (always present) |
+| 24 skills (`/harness-claude:*`) | **Bundled** | — (always present) |
 | 3 MCPs (memory · sequential-thinking · magic) | **Bundled**, load only when enabled | harness works without them |
 | `mgrep` | Optional companion | `Grep` / `Glob` |
 | `context7` | Optional companion | library's primary docs / web |
