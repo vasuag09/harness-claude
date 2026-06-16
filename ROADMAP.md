@@ -11,13 +11,16 @@ phases without rework. Each phase builds on the previous one's primitives.
 - **Exit criteria:** a real task runs end-to-end through the pipeline and produces
   production-grade output in isolation.
 
-## Phase 2 — Evaluation loops
-- Checkpoint evals (verify against criteria, fix before proceeding) and continuous evals
-  (full suite + lint on an interval / after major changes).
-- Benchmarking harness: fork + worktree + diff, with vs. without a component; report
-  pass@k (need it to work once) and pass^k (need consistency).
-- Turn the Stop "candidate pattern" seed into a real extract-and-evaluate flow.
-- **Adds:** an `eval/` module + `/eval` skill + a benchmark agent.
+## Phase 2 — Evaluation loops  🔄 (in progress)
+- ✅ Run-tracing slice (v0.3.0) — logbook of what actually fired; proves host-isolation at runtime.
+- ✅ Checkpoint evals (v0.4.0) — `/eval` verifies a change against its spec's acceptance criteria.
+- ✅ Extract-and-evaluate (v0.5.0) — the Stop "candidate pattern" seed is now a real flow:
+  trace-driven detector → `/extract` skill → rubric gate, staging proposals for human approval.
+- ⬜ Continuous evals (full suite + lint on an interval / after major changes). *(AC-E2)*
+- ⬜ Benchmarking harness: fork + worktree + diff, with vs. without a component; report
+  pass@k (need it to work once) and pass^k (need consistency). Plugs into the extract
+  rubric's R5 seam. *(AC-E3)*
+- **Adds:** an `eval/` module + `/eval` + `/extract` skills + a benchmark agent.
 
 ## Phase 3 — Retrieval systems
 - Codemaps + semantic search over the codebase (graph-backed) to cut exploration tokens.

@@ -36,7 +36,7 @@ and dependency-free.
 | `session-start:load-context` | SessionStart | session start | Surfaces the previous-session pointer; detects package manager | — |
 | `pre-compact:save-state` | PreCompact | before compaction | Saves a state snapshot so context isn't lost | — |
 | `stop:session-summary` | Stop | session end (tree changed) | Persists a session-end snapshot | git |
-| `stop:pattern-extraction` | Stop | session end (substantial) | Stages a candidate-pattern note (continuous-learning seed) | — |
+| `stop:pattern-extraction` | Stop | session end (substantial) | Reads the day's run-trace; stages a candidate note when a tool/skill sequence recurred (run `/extract` to act on it) | trace present |
 
 ---
 
@@ -74,7 +74,10 @@ Only the memory/session hooks write files, and only inside your project (or `~/.
 when outside a repo):
 
 - `.claude/sessions/<date>.md` — session snapshots (`save-session`, Stop, PreCompact)
-- `.claude/skills-staging/` — staged candidate patterns (never auto-applied; you approve)
+- `.claude/skills-staging/` — staged candidate patterns + `/extract` proposals (a draft
+  `SKILL.md` + `eval.md` per `<slug>/`). Never auto-applied; promotion into `skills/` is
+  always your explicit decision. Candidate notes carry only tool/skill names (from the
+  trace), never session content.
 - `.claude/traces/<date>.jsonl` — run-trace: one minimal line per tool call
   (`{ts, tool_name, kind, subagent_type?}`). No tool arguments, commands, or content are
   recorded, so secrets can't leak. Audit a run with
