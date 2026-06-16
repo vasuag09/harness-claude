@@ -19,5 +19,8 @@ harness-sessions/
 .env.local
 settings.local.json
 
+# Local plugin-activation / IDE state (per-checkout, not harness source)
+.claude/settings.json
+
 # Pre-existing tooling artifacts (not part of this harness)
 .code-graph/
