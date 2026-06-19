@@ -27,6 +27,29 @@ harness-sessions/
 # so nothing leaks into the working tree; only the local binary + P0 outputs are here.
 .claude/codebase-memory-install/
 
+# Phase 3 evaluation apparatus + benchmark corpus — internal R&D, kept LOCAL (not part of
+# the public plugin). The shipped product (skills/hooks/rules/docs) + the two hook tests
+# (test-cbm-hook, test-lazy-hook) + the tracked eval module (benchmark.js, checkpoint.js, …)
+# are committed; the per-tool pilots/verdicts/setups + corpus + killed-tool scaffolding are not.
+/BENCHMARKS.md
+/benchmarks/
+/scripts/eval/bench-*
+/scripts/eval/cbm-*
+/scripts/eval/codegraph-*
+/scripts/eval/codegraph.json
+/scripts/eval/headroom-*
+/scripts/eval/lazy-pilot.sh
+/scripts/eval/lazy-verdict.js
+/scripts/eval/fake-claude.sh
+/scripts/eval/probe-claude.sh
+/scripts/eval/measure-observation-pool.js
+/scripts/eval/test-bench-suite.sh
+/scripts/eval/test-cbm-pilot.sh
+/scripts/eval/test-cbm-setup.sh
+/scripts/eval/test-codegraph-*
+/scripts/eval/test-headroom-*
+/scripts/eval/test-lazy-pilot.sh
+
 # Local-only secrets / overrides
 .env
 .env.local
