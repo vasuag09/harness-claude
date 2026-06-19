@@ -31,9 +31,11 @@ atomic skills, delegate to subagents, and halt for your input at each gate):
   (plus four opt-in eval skills: `/eval` checkpoints a change against its spec's acceptance
   criteria, `/extract` turns a repeatable workflow into a staged skill proposal,
   `/benchmark` measures whether a component earns its keep via pass@k/pass^k, and `/health`
-  takes the repo's test/lint pass-fail pulse on demand — all off by default)
+  takes the repo's test/lint pass-fail pulse on demand — all off by default), plus `/lazy`
+  (Phase 3 · L3 generation reduction — the "build the minimum that works" reflex, active by
+  default via a hook, intensity `lite|full|ultra`)
 - **agents/** — 7 scoped subagents the skills delegate to
-- **hooks/** + **scripts/hooks/** — runtime automations (tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence)
+- **hooks/** + **scripts/hooks/** — runtime automations (tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence, structural orientation, generation reduction)
 - **.mcp.json** — memory · sequential-thinking · magic (load only when the plugin is enabled)
 
 ## Operating principles

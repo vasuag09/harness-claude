@@ -15,6 +15,20 @@ Many small, focused files beat few large ones.
 - Prefer the simplest design that works (KISS). Reach for an abstraction only when a
   concrete duplication or variation actually demands it.
 
+## Generation reduction (the lazy reflex)
+
+YAGNI/KISS above say *what* to build; this says *stop before over-building*. Before writing
+code, take the first rung that holds: does it need to exist at all → stdlib → native platform
+feature → already-installed dependency → one line → only then the minimum code that works. The
+shortest working diff wins; boring over clever. Mark deliberate simplifications with a `lazy:`
+comment naming the ceiling and the upgrade path. This reflex is active by default (Phase 3 ·
+Layer 3 — the `session-start:lazy-activate` hook; `/lazy` controls intensity `lite|full|ultra`,
+off via "stop lazy" / `LAZY_DISABLE=1`). **It never trades correctness for brevity** — the
+accuracy floor (trust-boundary validation, data-loss-preventing error handling, security, a11y,
+and one runnable check behind non-trivial logic) is non-negotiable. Measured marginal lift over
+this file's standing YAGNI: **−35% generated output / −23% LOC at held accuracy** on an
+over-build-prone task; dollar impact scales with how output-heavy the work is. See `skills/lazy/SKILL.md`.
+
 ## Immutability (CRITICAL)
 
 Create new values; never mutate shared ones in place.

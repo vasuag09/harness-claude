@@ -129,6 +129,56 @@ reqs="$(grep -aoE "require\(['\"][^'\"]+['\"]\)" "$BM" | sed -E "s/require\(['\"
 extra="$(printf '%s\n' "$reqs" | grep -vE '(_lib\.js|^child_process$|^os$)' || true)"
 if [ -z "$extra" ]; then ok "benchmark.js requires only _lib.js + node builtins"; else bad "benchmark.js has unexpected require(s): $extra"; fi
 
+echo "Phase 5 — cost capture + economics (v0.8, AC-V1/AC-V2)"
+
+# A task that writes a cost sidecar (cost_usd + usage) to HARNESS_TRIAL_OUT, then passes.
+# COST tunes the per-trial dollar figure; usage is fixed so token-summing is checkable.
+TASK_COST="$TMP/task-cost.sh"
+cat > "$TASK_COST" <<'EOF'
+#!/usr/bin/env bash
+[ -n "${HARNESS_TRIAL_OUT:-}" ] && printf '{"cost_usd":%s,"usage":{"input_tokens":100,"output_tokens":50,"cache_read_input_tokens":10,"cache_creation_input_tokens":5}}\n' "${COST:-0.10}" > "$HARNESS_TRIAL_OUT"
+exit 0
+EOF
+chmod +x "$TASK_COST"
+
+# 1) cost captured -> totalCostUsd + costPerSuccess (2 trials @ $0.10, 2 successes -> total 0.20, cps 0.10).
+COST=0.10 run --component costed --task "bash '$TASK_COST'" --k 2
+node -e 'const c=require(process.argv[1]).with;process.exit(Math.abs(c.totalCostUsd-0.20)<1e-9&&Math.abs(c.costPerSuccess-0.10)<1e-9?0:1)' "$REPO/.claude/eval/benchmarks/costed.json" 2>/dev/null \
+  && ok "cost sidecar captured -> totalCostUsd + cost-per-success" || bad "cost capture economics ($OUT)"
+
+# 2) usage tokens summed across trials (2 × {in100,out50,cr10,cc5} -> in200,out100,cr20,cc10).
+node -e 'const t=require(process.argv[1]).with.tokens;process.exit(t&&t.input===200&&t.output===100&&t.cacheRead===20&&t.cacheCreation===10?0:1)' "$REPO/.claude/eval/benchmarks/costed.json" 2>/dev/null \
+  && ok "usage tokens summed per cohort (input/output/cacheRead/cacheCreation)" || bad "token summing"
+
+# 3) no sidecar -> cost stays unknown (null), not a fake $0.
+run --component nocost --task "bash '$TASK_OK'" --k 2
+node -e 'const c=require(process.argv[1]).with;process.exit(c.totalCostUsd===null&&c.costPerSuccess===null&&c.tokens===null?0:1)' "$REPO/.claude/eval/benchmarks/nocost.json" 2>/dev/null \
+  && ok "no sidecar -> cost null (unmeasured, not fake \$0)" || bad "missing-sidecar cost null"
+
+# 4) partial coverage (sidecar on trial 0 only) -> refuse to partial-sum -> totalCostUsd null.
+TASK_PARTIAL="$TMP/task-partial.sh"
+cat > "$TASK_PARTIAL" <<'EOF'
+#!/usr/bin/env bash
+[ "$HARNESS_TRIAL" = "0" ] && [ -n "${HARNESS_TRIAL_OUT:-}" ] && printf '{"cost_usd":0.10,"usage":{"input_tokens":100,"output_tokens":50}}\n' > "$HARNESS_TRIAL_OUT"
+exit 0
+EOF
+chmod +x "$TASK_PARTIAL"
+run --component partial --task "bash '$TASK_PARTIAL'" --k 2
+node -e 'const c=require(process.argv[1]).with;process.exit(c.totalCostUsd===null?0:1)' "$REPO/.claude/eval/benchmarks/partial.json" 2>/dev/null \
+  && ok "any-trial-unmeasured -> totalCostUsd null (no misleading partial sum)" || bad "partial-sum refusal"
+
+# 5) cost-per-success divides by SUCCESSES, not trials (cost every trial, pass trial 0 only).
+TASK_COST_FLAKY="$TMP/task-cost-flaky.sh"
+cat > "$TASK_COST_FLAKY" <<'EOF'
+#!/usr/bin/env bash
+[ -n "${HARNESS_TRIAL_OUT:-}" ] && printf '{"cost_usd":0.10,"usage":{"input_tokens":1,"output_tokens":1}}\n' > "$HARNESS_TRIAL_OUT"
+[ "$HARNESS_TRIAL" = "0" ] && exit 0 || exit 1
+EOF
+chmod +x "$TASK_COST_FLAKY"
+run --component cps --task "bash '$TASK_COST_FLAKY'" --k 2
+node -e 'const c=require(process.argv[1]).with;process.exit(Math.abs(c.totalCostUsd-0.20)<1e-9&&c.successes===1&&Math.abs(c.costPerSuccess-0.20)<1e-9?0:1)' "$REPO/.claude/eval/benchmarks/cps.json" 2>/dev/null \
+  && ok "cost-per-success = total / successes (counts paid-but-failed trials)" || bad "cost-per-success denominator"
+
 echo
 echo "benchmark tests: $pass passed, $fail failed"
 [ "$fail" = "0" ]

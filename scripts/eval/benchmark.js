@@ -18,6 +18,9 @@
 //   HARNESS_COMPONENT          the component name (label)
 //   HARNESS_COMPONENT_ENABLED  "1" (with) | "0" (without)
 //   HARNESS_TRIAL              the 0-based trial index
+//   HARNESS_TRIAL_OUT          path to a per-trial cost sidecar the task MAY write (v0.8, AC-V1):
+//                              the task may write `{ "cost_usd": <n>, "usage": {...} }` there; this
+//                              reads ONLY those numbers (capture-nothing) to aggregate cohort cost.
 // A trial passes iff its score command exits 0 (default score = the task's own exit code;
 // recommended: `node scripts/eval/checkpoint.js <spec>` so a trial is scored against a spec's
 // acceptance criteria).
@@ -80,45 +83,103 @@ function runCmd(cmd, cwd, env) {
   }
 }
 
-// One trial in an isolated worktree. Always removes the worktree, even if the task or score
-// command throws. Returns true iff the trial passed.
+// Read a per-trial cost sidecar the task wrote to HARNESS_TRIAL_OUT. We extract ONLY numeric
+// cost/usage fields — never any string the task may have included (e.g. raw model output) — so
+// the capture-nothing invariant holds: nothing but numbers can reach the artifact. A missing or
+// malformed sidecar -> { cost: null, tokens: null } (the trial is still scored on pass/fail).
+function readSidecar(p) {
+  let raw;
+  try { raw = fs.readFileSync(p, 'utf8'); } catch { return { cost: null, tokens: null }; }
+  let obj;
+  try { obj = JSON.parse(raw); } catch { return { cost: null, tokens: null }; }
+  const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
+  const cost = num(obj.cost_usd) ?? num(obj.total_cost_usd);
+  const u = obj.usage && typeof obj.usage === 'object' ? obj.usage : null;
+  const tokens = u
+    ? {
+        input: num(u.input_tokens) ?? 0,
+        output: num(u.output_tokens) ?? 0,
+        cacheRead: num(u.cache_read_input_tokens) ?? 0,
+        cacheCreation: num(u.cache_creation_input_tokens) ?? 0,
+      }
+    : null;
+  return { cost, tokens };
+}
+
+// Aggregate per-trial cost into cohort economics. If ANY trial's cost is unknown (no sidecar),
+// we refuse to partial-sum and report nulls — an honest "unmeasured" beats a misleading total.
+// cost_per_success = total spent across ALL k trials / successes; null when no successes.
+function aggregateCost(trials, successes, k) {
+  const haveAllCost = trials.length > 0 && trials.every((t) => typeof t.cost === 'number');
+  const totalCostUsd = haveAllCost ? trials.reduce((s, t) => s + t.cost, 0) : null;
+  const meanCostPerTrial = totalCostUsd !== null && k ? totalCostUsd / k : null;
+  const costPerSuccess = totalCostUsd !== null && successes > 0 ? totalCostUsd / successes : null;
+  const haveAllTokens = trials.length > 0 && trials.every((t) => t.tokens);
+  const tokens = haveAllTokens
+    ? trials.reduce(
+        (a, t) => ({
+          input: a.input + t.tokens.input,
+          output: a.output + t.tokens.output,
+          cacheRead: a.cacheRead + t.tokens.cacheRead,
+          cacheCreation: a.cacheCreation + t.tokens.cacheCreation,
+        }),
+        { input: 0, output: 0, cacheRead: 0, cacheCreation: 0 }
+      )
+    : null;
+  return { totalCostUsd, meanCostPerTrial, costPerSuccess, tokens };
+}
+
+// One trial in an isolated worktree. Always removes the worktree (and the cost sidecar), even if
+// the task or score command throws. Returns { pass, cost, tokens } for the trial.
 function runTrial(repo, i, enabled, opts) {
+  const fail = { pass: false, cost: null, tokens: null };
   let wt = '';
   try {
     wt = fs.mkdtempSync(path.join(os.tmpdir(), 'hc-bench-'));
   } catch {
-    return false;
+    return fail;
   }
+  // Sidecar lives OUTSIDE the worktree so it survives worktree removal and never leaks into the
+  // repo; absolute path is handed to the task via HARNESS_TRIAL_OUT.
+  const sidecar = path.join(
+    os.tmpdir(),
+    `hc-bench-out-${process.pid}-${enabled ? 1 : 0}-${i}-${Date.now()}.json`
+  );
   const added = sh(`git worktree add --detach --quiet "${wt}" HEAD`, { cwd: repo }).ok;
   try {
-    if (!added) return false;
+    if (!added) return fail;
     const env = {
       HARNESS_COMPONENT: opts.component,
       HARNESS_COMPONENT_ENABLED: enabled ? '1' : '0',
       HARNESS_TRIAL: String(i),
+      HARNESS_TRIAL_OUT: sidecar,
     };
     const taskCode = runCmd(opts.task, wt, env);
     // No score command -> the task's own exit code is the pass signal.
-    if (!opts.score) return taskCode === 0;
-    return runCmd(opts.score, wt, env) === 0;
+    const passed = !opts.score ? taskCode === 0 : runCmd(opts.score, wt, env) === 0;
+    const { cost, tokens } = readSidecar(sidecar);
+    return { pass: passed, cost, tokens };
   } finally {
     if (added) sh(`git worktree remove --force "${wt}"`, { cwd: repo });
     try { fs.rmSync(wt, { recursive: true, force: true }); } catch {}
+    try { fs.rmSync(sidecar, { force: true }); } catch {}
   }
 }
 
-// Run k trials for one cohort; aggregate into the pass@k / pass^k metrics.
+// Run k trials for one cohort; aggregate into the pass@k / pass^k + cost metrics.
 function runCohort(repo, enabled, opts) {
-  let successes = 0;
+  const trials = [];
   for (let i = 0; i < opts.k; i++) {
-    if (runTrial(repo, i, enabled, opts)) successes++;
+    trials.push(runTrial(repo, i, enabled, opts));
   }
+  const successes = trials.reduce((n, t) => n + (t.pass ? 1 : 0), 0);
   return {
     k: opts.k,
     successes,
     passAt: successes >= 1, // pass@k: works at least once
     passCaret: successes === opts.k, // pass^k: works on all k trials
     successRate: opts.k ? successes / opts.k : 0,
+    ...aggregateCost(trials, successes, opts.k),
   };
 }
 
@@ -133,9 +194,11 @@ function verdict(withC, withoutC) {
 }
 
 function report(result) {
+  const money = (v) => (v == null ? 'n/a' : `$${v.toFixed(4)}`);
   const row = (label, c) =>
     `  ${label.padEnd(8)} pass@k=${c.passAt} pass^k=${c.passCaret} ` +
-    `(${c.successes}/${c.k}, rate ${c.successRate.toFixed(2)})`;
+    `(${c.successes}/${c.k}, rate ${c.successRate.toFixed(2)}) ` +
+    `cost/success=${money(c.costPerSuccess)} total=${money(c.totalCostUsd)}`;
   return [
     `benchmark: component "${result.component}" over k=${result.k} trials`,
     row('with', result.with),

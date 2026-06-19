@@ -15,6 +15,18 @@ node_modules/
 .claude/eval/
 harness-sessions/
 
+# Phase 3 Layer 1 — isolated Headroom eval venv (heavy Python dep, never committed)
+.claude/headroom-venv/
+
+# Phase 3 Layer 2 — CodeGraph eval artifacts (local install + per-project index, never committed)
+.claude/codegraph-install/
+.codegraph/
+
+# Phase 3 Layer 2 — codebase-memory-mcp eval artifacts (local binary, never committed).
+# NB: the per-project index lives OUTSIDE the repo in ~/.cache/codebase-memory-mcp/ (XDG cache),
+# so nothing leaks into the working tree; only the local binary + P0 outputs are here.
+.claude/codebase-memory-install/
+
 # Local-only secrets / overrides
 .env
 .env.local

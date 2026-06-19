@@ -64,6 +64,21 @@ and **pause at each gate for your input**. Not unattended runs.
 | `/save-session` | Summarize progress to a dated session file |
 | `/resume-session` | Reload the most recent session and re-establish context |
 
+### Opt-in eval (off by default)
+
+| Command | What it does | Delegates to |
+|---------|--------------|--------------|
+| `/eval` | Checkpoint a change against its spec's acceptance criteria | — |
+| `/extract` | Turn a repeatable workflow into a staged skill proposal (human-approved) | — |
+| `/benchmark` | Measure whether a component earns its keep — fork + worktree, with vs. without, pass@k / pass^k | — |
+| `/health` | Run the repo's test/lint/typecheck pulse on demand (auto-detected or `--cmd`) | — |
+
+### Cost & token optimization (Phase 3)
+
+| Command | What it does | Delegates to |
+|---------|--------------|--------------|
+| `/lazy` | Generation reduction — build the minimum that works (the "lazy senior dev" ladder). Active by default via the `session-start:lazy-activate` hook; intensity `lite\|full\|ultra`, off via "stop lazy" / `LAZY_DISABLE=1`. Never trades correctness for brevity. | — |
+
 ---
 
 ## Agents

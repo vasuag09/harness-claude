@@ -41,9 +41,9 @@ It lives in its own repo and installs as a Claude Code **plugin/marketplace**, s
 | Layer | Where | Count | Role |
 |-------|-------|-------|------|
 | Rules | `rules/` | 7 | always-on guidance (cited by skills; imported by `CLAUDE.md`) |
-| Skills | `skills/<name>/SKILL.md` | 24 | 15 atomic `/spec … /ship` drivers + 5 phase orchestrators + 4 opt-in eval (`/eval` `/extract` `/benchmark` `/health`) |
+| Skills | `skills/<name>/SKILL.md` | 25 | 15 atomic `/spec … /ship` drivers + 5 phase orchestrators + 4 opt-in eval (`/eval` `/extract` `/benchmark` `/health`) + `/lazy` (generation reduction) |
 | Agents | `agents/*.md` | 7 | scoped subagents the skills delegate to |
-| Hooks | `hooks/hooks.json` + `scripts/hooks/` | — | tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence |
+| Hooks | `hooks/hooks.json` + `scripts/hooks/` | — | tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence, structural orientation, generation reduction |
 | MCPs | `.mcp.json` | 3 | memory · sequential-thinking · magic (load only when enabled) |
 
 ### The pipeline
@@ -141,7 +141,7 @@ to built-in tools and say so.
 | Item | Status | Fallback when absent |
 |------|--------|----------------------|
 | 7 agents (`harness-claude:*`) | **Bundled** | — (always present) |
-| 24 skills (`/harness-claude:*`) | **Bundled** | — (always present) |
+| 25 skills (`/harness-claude:*`) | **Bundled** | — (always present) |
 | 3 MCPs (memory · sequential-thinking · magic) | **Bundled**, load only when enabled | harness works without them |
 | `mgrep` | Optional companion | `Grep` / `Glob` |
 | `context7` | Optional companion | library's primary docs / web |
@@ -198,8 +198,11 @@ Requirements: **Node.js** (hook scripts) and, for the status line, `bash` + idea
 
 ## Roadmap
 
-Phase 1 (subagents) is this release. Next: eval loops → retrieval → long-running agents
-→ multi-agent orchestration → computer-use. See [ROADMAP.md](./ROADMAP.md).
+Phase 1 (subagents) and Phase 2 (eval loops) are complete. Phase 3 (cost & token
+optimization) is in progress — generation reduction and structural orientation are
+integrated; input-compression and a heavyweight code-graph were evaluated and killed on
+evidence. Next: long-running agents → multi-agent orchestration → computer-use. See
+[ROADMAP.md](./ROADMAP.md).
 
 ## License
 

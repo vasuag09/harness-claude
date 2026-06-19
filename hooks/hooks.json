@@ -24,6 +24,14 @@
         ],
         "description": "Nudge to use mgrep instead of grep/rg",
         "id": "pre:search:mgrep-nudge"
+      },
+      {
+        "matcher": "Grep",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/pre-search-cbm-orient.js\"" }
+        ],
+        "description": "Augment Grep with structural orientation hits from the codebase-memory-mcp CLI index (no-op unless the binary is installed + indexed; CLI-path only, never the MCP server)",
+        "id": "pre:search:cbm-orient"
       }
     ],
     "PostToolUse": [
@@ -83,6 +91,13 @@
         ],
         "description": "Load previous-session pointer and detect package manager",
         "id": "session-start:load-context"
+      },
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/session-lazy-activate.js\"" }
+        ],
+        "description": "Activate /lazy generation-reduction (Phase 3 L3): inject the lazy ladder as additionalContext so the agent builds the minimum that works by default; reversible (LAZY_DISABLE=1 / LAZY_MODE=off), failure-isolated",
+        "id": "session-start:lazy-activate"
       }
     ],
     "PreCompact": [

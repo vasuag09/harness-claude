@@ -3,7 +3,7 @@
 The base harness is **phase 1**. It is deliberately built to extend toward the later
 phases without rework. Each phase builds on the previous one's primitives.
 
-## Phase 1 — Subagents  ✅ (this release)
+## Phase 1 — Subagents  ✅ (complete)
 - Scoped subagents (planner, architect, reviewers, tdd-guide, resolvers, cleaner).
 - Two orchestration modes: sequential phases (default) + iterative retrieval (≤3 cycles).
 - Token optimization via cheapest-sufficient-model delegation + summary returns.
@@ -24,12 +24,26 @@ phases without rework. Each phase builds on the previous one's primitives.
   summary + secret-free artifact. *(AC-E2)*
 - **Adds:** an `eval/` module + `/eval` + `/extract` + `/benchmark` + `/health` skills.
 
-## Phase 3 — Retrieval systems  ⬅ next
-- Codemaps + semantic search over the codebase (graph-backed) to cut exploration tokens.
-- RAG over docs/specs/ADRs; retrieval feeds the planner and reviewers.
-- **Adds:** retrieval skills/agents + an index the pipeline consults before exploring.
+## Phase 3 — Cost & token optimization (no accuracy loss)  🔄 in progress
+Reframed from "retrieval systems": retrieval gives only ~+2pp capability on real coding tasks
+(the bitter lesson, confirmed across the literature), so the honest, achievable target is
+**token efficiency at held accuracy**. Three independent levers on agent cost, each its own
+spec, each **benchmark-gated** on cost-per-success at held pass^k vs the harness's own baseline —
+**killed if it can't beat that baseline** (the discipline is the point; two of four were killed):
 
-## Phase 4 — Long-running agents
+| Lever | What | Status (v0.8.0) |
+|-------|------|-----------------|
+| Input tokens | Wire-level input-compression proxy (Headroom) | 🔴 killed — broke Claude Code's cache economics ($↑) |
+| Orientation turns | Structural code-graph orientation | 🔴 codegraph killed (MCP context tax) → 🟢 `codebase-memory-mcp` CLI-path integrated as an always-on Grep hook (no tax); large-repo win is a stated, unproven bet |
+| Output tokens + turns | Generation reduction — the `/lazy` "build the minimum that works" reflex | 🟢 integrated (always-on SessionStart hook, reversible); measured −35% output / −23% LOC at held accuracy on an over-build task |
+
+- **Adds (v0.8.0):** `/lazy` skill + two always-on hooks (`session-start:lazy-activate`,
+  `pre:search:cbm-orient`), a reusable benchmark apparatus + corpus under `benchmarks/` and
+  `scripts/eval/`, and kill-record specs under `docs/specs/`.
+- **Still owed:** the large-repo / output-heavy validation where these levers pay in real dollars
+  (the small self-test repo can't show it). Honest framing carried in `docs/HOOKS.md` and the specs.
+
+## Phase 4 — Long-running agents  ⬅ next
 - Autonomous loops (`/loop`-style), background tasks, scheduled runs.
 - Self-checkpointing against the eval loops from phase 2 so a long run can't silently drift.
 - **Adds:** loop-operator agent + durable state + guardrails.
