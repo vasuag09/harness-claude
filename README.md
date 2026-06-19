@@ -1,12 +1,52 @@
 # harness-claude
 
-A lean, **full-SDLC Claude Code harness** — personal, isolated, and testable. It runs a
-four-phase pipeline (**Plan → Implement → Verify → Maintain**) backed by scoped
-subagents, runtime hooks, and cross-session memory. Built to evolve toward eval loops,
-retrieval, long-running agents, multi-agent orchestration, and computer-use (see
-[ROADMAP.md](./ROADMAP.md)).
+**A lean, full-SDLC harness for Claude Code that benchmark-gates its own features — and kills the ones that don't earn their keep.**
 
-Stack focus: **TypeScript/JS (React, Next, Vercel)** and **Python**.
+This is the first time I'm sharing this publicly. I built it privately, iterating toward
+v0.8.0 (an internal version count, not a prior release history), to turn Claude Code from
+a powerful-but-undisciplined chat loop into a real **Plan → Implement → Verify → Maintain**
+pipeline — scoped subagents, test-first gates, cross-session memory, reversible hooks.
+
+The part I'm most proud of isn't a feature — it's the discipline behind one of them. Every
+cost optimization I tried had to beat a bare baseline on cost-per-successful-task, or I
+killed it and wrote down why. I ran 4 experiments. I shipped 2. [See what I killed and why ↓](#what-i-killed-and-why)
+
+Stack focus: **TypeScript/JS (React, Next, Vercel)** and **Python**. MIT-licensed,
+plugin-installable, ~0-dependency hooks (plain Node).
+
+```
+PLAN ─────────────► IMPLEMENT ─────► VERIFY ─────────────► MAINTAIN
+/spec  /research          /implement     /review  /security-review   /refactor-clean
+/plan  /architect         /build-fix     /test    /verify  /ship      /onboard
+```
+
+```bash
+claude plugin marketplace add vasuag09/harness-claude
+/plugin            # find "harness-claude", enable it
+/harness           # run the full pipeline on a real task
+```
+
+Built to evolve toward eval loops, retrieval, long-running agents, multi-agent
+orchestration, and computer-use (see [ROADMAP.md](./ROADMAP.md)).
+
+---
+
+## What I killed (and why)
+
+Every optimization here had to clear one gate: **does it beat a bare baseline on
+cost-per-successful-task, at held consistency (pass^k)?** Not "does it work" — "is it
+worth it." Two of four didn't clear it.
+
+| # | Optimization | Result | Why |
+|---|---|---|---|
+| 1 | Input-compression proxy (wire-level, compresses what's fed to the model) | 🔴 **Killed** | Broke Claude Code's cache economics — compressing the cached prefix invalidated the cache that made it cheap, so it cost *more* |
+| 2 | A code-graph MCP (a popular ~51k★ structural-index server) | 🔴 **Killed** | Its fixed per-session context tax was bigger than the entire task cost on a normal-sized repo (might win on very large repos — out of scope here) |
+| 3 | Generation reduction — the `/lazy` "build the minimum that actually works" reflex | 🟢 **Shipped, always-on** | **−35% generated output tokens, −23% LOC, at held accuracy** (k=3, Opus/Sonnet, measured against the harness's own existing YAGNI rules) |
+| 4 | Structural orientation hook (lightweight local code-index) | 🟢 **Shipped, always-on, with a caveat** | A large-repo bet, not yet benchmarked at scale — does no harm on small repos, but isn't a proven win there either |
+
+One honest caveat on #3: the **dollar** savings on a small task were only ~−3% (within
+noise) — cost here is dominated by cached input, and the output cut only moves real
+dollars on output-heavy work. The win is real, just not a headline multiplier.
 
 ---
 
