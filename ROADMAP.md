@@ -24,7 +24,7 @@ phases without rework. Each phase builds on the previous one's primitives.
   summary + secret-free artifact. *(AC-E2)*
 - **Adds:** an `eval/` module + `/eval` + `/extract` + `/benchmark` + `/health` skills.
 
-## Phase 3 — Cost & token optimization (no accuracy loss)  🔄 in progress
+## Phase 3 — Cost & token optimization (no accuracy loss)  ✅ (complete, v0.8.0)
 Reframed from "retrieval systems": retrieval gives only ~+2pp capability on real coding tasks
 (the bitter lesson, confirmed across the literature), so the honest, achievable target is
 **token efficiency at held accuracy**. Three independent levers on agent cost, each its own
@@ -40,8 +40,12 @@ spec, each **benchmark-gated** on cost-per-success at held pass^k vs the harness
 - **Adds (v0.8.0):** `/lazy` skill + two always-on hooks (`session-start:lazy-activate`,
   `pre:search:cbm-orient`), a reusable benchmark apparatus + corpus under `benchmarks/` and
   `scripts/eval/`, and kill-record specs under `docs/specs/`.
-- **Still owed:** the large-repo / output-heavy validation where these levers pay in real dollars
-  (the small self-test repo can't show it). Honest framing carried in `docs/HOOKS.md` and the specs.
+- **Outcome:** phase complete — the lever space was explored, the two that beat the baseline shipped
+  (always-on, reversible), the two that didn't were killed on cost evidence and recorded. The
+  benchmark-gated discipline is itself the deliverable: features earn their place or get cut.
+- **Deferred (not a blocker):** the large-repo / output-heavy validation where these levers pay in
+  real dollars (the small self-test repo can't show it). Honest framing carried in `docs/HOOKS.md`
+  and the specs; revisit if/when a large-repo corpus exists.
 
 ## Phase 4 — Long-running agents  ⬅ next
 - Autonomous loops (`/loop`-style), background tasks, scheduled runs.

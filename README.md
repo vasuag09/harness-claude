@@ -198,11 +198,10 @@ Requirements: **Node.js** (hook scripts) and, for the status line, `bash` + idea
 
 ## Roadmap
 
-Phase 1 (subagents) and Phase 2 (eval loops) are complete. Phase 3 (cost & token
-optimization) is in progress — generation reduction and structural orientation are
-integrated; input-compression and a heavyweight code-graph were evaluated and killed on
-evidence. Next: long-running agents → multi-agent orchestration → computer-use. See
-[ROADMAP.md](./ROADMAP.md).
+Phases 1–3 are complete: subagents, eval loops, and benchmark-gated cost/token
+optimization (generation reduction + structural orientation shipped; input-compression and
+a heavyweight code-graph were evaluated and killed on evidence). Next: long-running agents →
+multi-agent orchestration → computer-use. See [ROADMAP.md](./ROADMAP.md).
 
 ## License
 
