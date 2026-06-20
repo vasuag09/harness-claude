@@ -88,6 +88,21 @@ or neither; internal/CLI work skips them):
   output) + reconciliation that surfaces failed/dropped workers rather than swallowing them.
 - **Adds (v0.11.0):** `skills/orchestrate/{SKILL.md,worker-contract.md}`. No new agent (the
   skill is the lead), no new dependency, no new MCP server. Opt-in, off by default.
+- **Wired in (v0.11.1):** `/implement` + `/harness-implement` now run a parallel-fan-out check —
+  when a plan phase spans 3+ independent files with disjoint write-sets, they *offer*
+  `/orchestrate` (opt-in; never auto-start a multi-agent run).
+
+## Bug-fix fast lane (`/fix`)  ✅ (complete, v0.12.0)
+- ✅ `/fix`: the parallel entry for fixing something **already broken** (a red test, a prod error,
+  a reported defect) — the pipeline's front door is greenfield-shaped, so bugs get their own
+  disciplined entry instead of being over-ceremonied through `/spec`.
+- ✅ Discipline: **reproduce as a failing test FIRST** (capture the bug RED), name the **root
+  cause** (not the symptom), write a **minimal** fix-plan (no refactor-while-you're-in-there).
+- ✅ Reuse, don't rebuild: hands off to the existing pipeline (`/implement` → `/review` +
+  `/security-review` → `/verify` → `/ship`); regression test via `tdd-guide`. Distinct from
+  `/build-fix` (build/type errors, not behavioral bugs).
+- **Adds (v0.12.0):** `skills/fix/SKILL.md`. No new agent (the skill is the lead), no new
+  dependency, no new MCP server. Opt-in, off by default; git boundary holds.
 
 ## Phase 6 — Computer-use agents  ⬅ next
 - Browser / GUI automation (Playwright/Chrome) folded into `/verify` and beyond.

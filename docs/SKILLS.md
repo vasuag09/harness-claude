@@ -41,6 +41,12 @@ and **pause at each gate for your input**. Not unattended runs.
 | `/implement` | Execute the plan via TDD — tests first, then minimal code, phase by phase | `tdd-guide` |
 | `/build-fix` | Resolve build / type / compile errors fast, with minimal diffs | `build-error-resolver` |
 
+### Bug-fix fast lane (opt-in)
+
+| Command | What it does | Delegates to |
+|---------|--------------|--------------|
+| `/fix` | Parallel entry for fixing something already broken — reproduce as a failing test first, name the root cause, write a minimal fix-plan, then hand off to `/implement` → `/review` + `/security-review` → `/verify` → `/ship`. Distinct from `/build-fix` (behavioral bugs vs. build errors). | `tdd-guide` (+ existing reviewers / `build-error-resolver`) |
+
 ### Verify phase
 
 | Command | What it does | Delegates to |

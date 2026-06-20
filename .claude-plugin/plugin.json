@@ -1,7 +1,7 @@
 {
   "name": "harness-claude",
-  "version": "0.11.0",
-  "description": "Lean full-SDLC Claude Code harness — Plan, Implement, Verify, Maintain — with subagent orchestration, memory persistence, a product/UX + system design altitude, benchmark-gated cost/token optimization, guarded long-running agent runs, and multi-agent parallel fan-out.",
+  "version": "0.12.0",
+  "description": "Lean full-SDLC Claude Code harness — Plan, Implement, Verify, Maintain — with subagent orchestration, memory persistence, a product/UX + system design altitude, benchmark-gated cost/token optimization, guarded long-running agent runs, multi-agent parallel fan-out, and a bug-fix fast lane.",
   "author": {
     "name": "Vasu Agrawal"
   },

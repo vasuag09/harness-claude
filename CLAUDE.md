@@ -47,7 +47,10 @@ atomic skills, delegate to subagents, and halt for your input at each gate):
   opt-in, off by default), plus `/orchestrate` (Phase 5 · multi-agent orchestration — the
   third orchestration mode: decomposes a task across 3+ independent files, fans out to
   parallel workers on the platform Workflow tool with one-writer-per-file by assignment, and
-  reconciles their summaries; opt-in, off by default)
+  reconciles their summaries; opt-in, off by default), plus `/fix` (bug-fix fast lane — the
+  parallel entry for fixing something already broken: reproduce-as-a-failing-test first, name the
+  root cause, write a minimal fix-plan, then hand off to `/implement` → verify → ship; reuses
+  existing agents, no new agent/dep; opt-in)
 - **agents/** — 8 scoped subagents the skills delegate to
 - **hooks/** + **scripts/hooks/** — runtime automations (tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence, structural orientation, generation reduction)
 - **.mcp.json** — memory · sequential-thinking · magic (load only when the plugin is enabled)

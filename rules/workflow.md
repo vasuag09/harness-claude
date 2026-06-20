@@ -58,6 +58,16 @@ one result. The one-writer-per-file guarantee holds by construction (assignment-
 isolation). Opt-in; the git boundary still holds — no worker commits/pushes/branches unless
 explicitly armed. See `rules/agents.md` for the orchestration-mode decision rule.
 
+## Bug-fix entry (opt-in)
+
+The pipeline above is greenfield-shaped — it assumes you're *building* a feature. When something
+is **already broken** (a red test, a prod error, a reported defect), `/fix` is the parallel entry:
+it does the bug-specific part — **reproduce as a failing test FIRST**, name the root cause, write a
+**minimal** fix-plan — then hands off to the *existing* pipeline (`/implement` → `/review` +
+`/security-review` → `/verify` → `/ship`) so the fix rides the proven gates rather than duplicating
+them. Distinct from `/build-fix` (which is for build/type/compile errors, not behavioral bugs).
+Opt-in; the git boundary still holds — `/fix` never commits/pushes/branches.
+
 ## Don'ts
 
 - Don't skip phases. Don't start coding before a spec + plan exist for non-trivial work.

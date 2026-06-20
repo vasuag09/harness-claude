@@ -13,9 +13,13 @@ Goal: turn the plan into working, tested, clean code — one phase at a time.
      acceptance criterion (RED) → minimum code to pass (GREEN) → refactor.
    - Keep files modular and lean (<800 lines), immutable patterns, inputs validated.
    - Let the format/typecheck hooks run; fix what they flag immediately.
-2. After each phase, confirm its exit check (test green, build clean) before moving on.
-3. If the build breaks and the fix is non-obvious, hand off to `/harness-claude:build-fix`.
-4. Stay inside the plan. If reality diverges from it, stop, update the plan, then resume
+2. **Parallel-fan-out check.** If a phase (or the plan) spans **3+ independent files with
+   disjoint write-sets and no dependency between them**, *offer* to fan the work out via
+   `/harness-claude:orchestrate` instead of editing serially. Opt-in — propose it and let the
+   user choose; never silently start a multi-agent run (it spawns workers and costs more tokens).
+3. After each phase, confirm its exit check (test green, build clean) before moving on.
+4. If the build breaks and the fix is non-obvious, hand off to `/harness-claude:build-fix`.
+5. Stay inside the plan. If reality diverges from it, stop, update the plan, then resume
    — don't silently improvise scope.
 
 ## Token discipline
