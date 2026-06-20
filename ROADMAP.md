@@ -65,12 +65,19 @@ or neither; internal/CLI work skips them):
   be proven on the repo itself — shipped as an *enable, don't-prove-on-self* module (mirrors the
   deferred large-repo benchmark). Validate on a small frontend project when one exists.
 
-## Phase 4 — Long-running agents  ⬅ next
-- Autonomous loops (`/loop`-style), background tasks, scheduled runs.
-- Self-checkpointing against the eval loops from phase 2 so a long run can't silently drift.
-- **Adds:** loop-operator agent + durable state + guardrails.
+## Phase 4 — Long-running agents  ✅ (complete, v0.10.0)
+- ✅ `/operate`: supervises an unattended run on the platform's `/loop` + `/schedule` (thin
+  discipline layer — no new runtime), self-checkpointing against the Phase-2 eval skills.
+- ✅ Drift can't pass silently: each checkpoint reuses `/health` (test/lint pulse) + `/eval`
+  (acceptance-criteria gate); N consecutive failures halt the run and surface the criterion.
+- ✅ Halting guardrails — drift > budget (wall-clock) > iteration-cap — and durable run state
+  (`.claude/runs/<id>.json`) as the source of truth across firings (survives fresh contexts).
+- **Adds (v0.10.0):** `loop-operator` agent + `/operate` skill + `scripts/operate/{step,state,
+  guardrails}.js`. Opt-in, no new dependency, no new MCP server. *(Token/cost budget is
+  best-effort in v1 — a plain `/loop` doesn't expose token spend; wall-clock + iteration cap
+  carry the budget guarantee.)*
 
-## Phase 5 — Multi-agent orchestration
+## Phase 5 — Multi-agent orchestration  ⬅ next
 - Lead / worker fan-out with file-ownership locking (one writer per file).
 - Task decomposition by file / module / pipeline stage; parallel where independent.
 - **Adds:** an orchestrator skill coordinating multiple agents with explicit contracts.

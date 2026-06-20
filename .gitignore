@@ -13,6 +13,7 @@ node_modules/
 .claude/skills-staging/
 .claude/traces/
 .claude/eval/
+.claude/runs/
 harness-sessions/
 
 # Phase 3 Layer 1 — isolated Headroom eval venv (heavy Python dep, never committed)

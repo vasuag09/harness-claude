@@ -38,8 +38,20 @@ In the Plan phase, `/research` searches existing libraries, registries, and code
 (GitHub, context7, package registries) for something that already solves ≥80% of the
 problem. Adopt/port proven code over hand-rolling. Document the decision in the spec.
 
+## Long-running runs (opt-in)
+
+For unattended, many-iteration or scheduled work, `/operate` supervises a run on the
+platform's `/loop` + `/schedule` (a thin discipline layer — no new runtime). It enforces
+**halting guardrails** (drift > budget > iteration-cap) and keeps **durable state** in
+`.claude/runs/<id>.json` — the source of truth across firings, since each firing may be a
+fresh context. Each checkpoint reuses `/health` + `/eval` so a run **can't silently drift**:
+N consecutive failing checkpoints halt it and surface the criterion. Opt-in; the git
+boundary still holds — a run never commits/pushes/branches unless explicitly armed.
+
 ## Don'ts
 
 - Don't skip phases. Don't start coding before a spec + plan exist for non-trivial work.
 - Don't run git commit/push/branch operations unless the user explicitly asks.
 - Don't write extracted/learned skills automatically — stage them for approval.
+- Don't let a long `/operate` run continue past a drift halt — stop, surface the failing
+  criterion, and fix the cause; never bump the run id to dodge a guardrail.

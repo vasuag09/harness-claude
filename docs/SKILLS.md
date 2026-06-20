@@ -81,6 +81,12 @@ and **pause at each gate for your input**. Not unattended runs.
 |---------|--------------|--------------|
 | `/lazy` | Generation reduction — build the minimum that works (the "lazy senior dev" ladder). Active by default via the `session-start:lazy-activate` hook; intensity `lite\|full\|ultra`, off via "stop lazy" / `LAZY_DISABLE=1`. Never trades correctness for brevity. | — |
 
+### Long-running agents (Phase 4, opt-in)
+
+| Command | What it does | Delegates to |
+|---------|--------------|--------------|
+| `/operate` | Supervise an unattended run on the platform's `/loop` + `/schedule` — halting guardrails (drift > budget > iteration-cap) + durable state (`.claude/runs/<id>.json`); self-checkpoints against `/health` + `/eval` so it can't silently drift. | `loop-operator` |
+
 ---
 
 ## Agents
@@ -97,6 +103,7 @@ Each gets the minimum tools its job requires.
 | `tdd-guide` | Test-first implementation | Read + write (tests then code) |
 | `build-error-resolver` | Fix build/type errors | Read + write (minimal diffs) |
 | `refactor-cleaner` | Dead-code & duplication removal | Read + write (behavior-preserving) |
+| `loop-operator` | One safe iteration of a long-running `/operate` run | Read + write (one increment, then checkpoint) |
 
 ---
 

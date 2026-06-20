@@ -21,8 +21,8 @@ cd "$ROOT"
 NS="$(node -e 'process.stdout.write(require("./.claude-plugin/plugin.json").name)')"
 
 # The harness's own components — bare references to these must be namespaced.
-AGENTS='planner|architect|code-reviewer|security-reviewer|tdd-guide|build-error-resolver|refactor-cleaner'
-SKILLS='spec|research|plan|architect|design|implement|build-fix|review|security-review|design-review|test|verify|ship|refactor-clean|onboard|harness|harness-plan|harness-implement|harness-verify|harness-maintain|save-session|resume-session'
+AGENTS='planner|architect|code-reviewer|security-reviewer|tdd-guide|build-error-resolver|refactor-cleaner|loop-operator'
+SKILLS='spec|research|plan|architect|design|implement|build-fix|review|security-review|design-review|test|verify|ship|refactor-clean|onboard|operate|harness|harness-plan|harness-implement|harness-verify|harness-maintain|save-session|resume-session'
 
 scan_dirs=(skills agents)
 fail=0
