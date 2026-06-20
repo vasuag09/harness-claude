@@ -47,6 +47,24 @@ spec, each **benchmark-gated** on cost-per-success at held pass^k vs the harness
   real dollars (the small self-test repo can't show it). Honest framing carried in `docs/HOOKS.md`
   and the specs; revisit if/when a large-repo corpus exists.
 
+## Design altitude (v0.9.0) — cross-cutting PLAN + VERIFY enhancement  ✅
+Not a numbered phase — a leveling-up of the pipeline's *design* altitude, both product/UX and
+system. Adds two conditional skills that fire only on relevant work (a change needs one, both,
+or neither; internal/CLI work skips them):
+- **`/design`** (PLAN) — a product/UX/UI **design brief** before code, routing by surface to the
+  harness's own craft rubrics under `skills/design/references/` (product-UI · aesthetic-direction)
+  and always overlaying the cross-cutting a11y/UX floor. Fully self-contained — no external plugin.
+- **`/design-review`** (VERIFY) — a craft + a11y/UX gate parallel to `/security-review`;
+  blocks on Blockers, judges by default.
+- **Strengthened `/architect`** — mandatory do-nothing/simplest alternative, explicit NFR
+  trade-offs, failure-degradation; reads the in-repo architecture-domain cues, grounds via context7.
+- **Adds:** `/design` + `/design-review` skills (25→27), the self-contained design rubric set,
+  design-gate wiring in `harness-plan` / `harness-verify` / `workflow.md`. **Zero new MCP servers**
+  (skill + knowledge wiring only — consistent with the Phase-3 anti-MCP-tax discipline).
+- **Dogfooding caveat (honest):** this harness has no UI, so `/design` / `/design-review` can't
+  be proven on the repo itself — shipped as an *enable, don't-prove-on-self* module (mirrors the
+  deferred large-repo benchmark). Validate on a small frontend project when one exists.
+
 ## Phase 4 — Long-running agents  ⬅ next
 - Autonomous loops (`/loop`-style), background tasks, scheduled runs.
 - Self-checkpointing against the eval loops from phase 2 so a long run can't silently drift.

@@ -22,17 +22,23 @@ skills (`/harness-claude:spec`, `/harness-claude:plan`, ...) directly when you o
    the *objective*, not just a query). Return a phased plan with per-phase exit checks.
    → **HALT** and show the user the plan for approval before any code.
 
-4. **`/harness-claude:architect`** — **only if** the plan flagged a load-bearing design decision
-   (new subsystem, public interface/data model, cross-cutting change, multi-shape
-   refactor). If so, delegate to the `harness-claude:architect` agent and present the ADR.
-   → **HALT** for approval. If the work is routine, **skip this step** and say so.
+4. **Design gate** — two independent, conditional siblings. A change can need one, both,
+   or neither; run only what's relevant and **say which you skipped**.
+   - **`/harness-claude:architect`** — **only if** the plan flagged a load-bearing *system*
+     decision (new subsystem, public interface/data model, cross-cutting change, multi-shape
+     refactor). Delegate to the `harness-claude:architect` agent and present the ADR.
+   - **`/harness-claude:design`** — **only if** the change has a *user-facing surface* (page,
+     screen, component, form, mobile, CLI/TUI presentation). Produce the design brief.
+   → **HALT** for approval on whichever ran. If the work is routine and internal (no UI, no
+   load-bearing design — like this CLI harness itself), **skip both** and say so.
 
 ## Rules
 - Delegate the heavy steps (plan, architecture) to subagents; keep only their summaries
   in the main context to protect tokens.
 - Never skip the HALTs — the Plan phase is interactive by design.
-- Save artifacts (spec, plan, ADR) via `/harness-claude:save-session` for multi-session work.
+- Save artifacts (spec, plan, ADR, design brief) via `/harness-claude:save-session` for multi-session work.
 
 ## Output
-A short phase summary: spec ✓, reuse decision, approved plan (phases), architecture
-decision (or "skipped — routine"). Then hand off to `/harness-claude:harness-implement`.
+A short phase summary: spec ✓, reuse decision, approved plan (phases), and the design gate —
+architecture decision (or "skipped — routine") and design brief (or "skipped — no UI surface").
+Then hand off to `/harness-claude:harness-implement`.

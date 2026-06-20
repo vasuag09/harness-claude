@@ -11,21 +11,28 @@ reviewer can both trust.
 ## Method
 1. Frame the problem: requirements, constraints, non-functionals (scale, latency,
    security, cost), and what is explicitly out of scope.
-2. Survey the existing architecture before proposing change — fit the grain of the
+2. **Ground before deciding.** Name the architecture domain(s) the change touches (API,
+   caching, cloud-native, message-queue, security) and apply the relevant cues — read
+   `skills/design/references/architecture-domains.md`. Confirm library/platform capabilities
+   via context7 rather than assuming them.
+3. Survey the existing architecture before proposing change — fit the grain of the
    codebase, don't fight it.
-3. Propose 1–2 viable approaches. For the recommended one, state the trade-offs you
-   accept and why the alternative loses.
-4. Define the seams: modules, interfaces, data model, error/edge handling, and how it
-   degrades under failure.
-5. Prefer boring, proven patterns. Justify any new dependency.
+4. Propose approaches. **Always include the do-nothing / simplest-possible option** as a
+   real alternative (the YAGNI gate). For the recommended one, state the trade-offs you
+   accept and why each alternative — including "do nothing" — loses.
+5. Define the seams: modules, interfaces, data model, error/edge handling, and **how it
+   degrades under failure** (the unhappy path is mandatory).
+6. State the **non-functional trade-offs explicitly** — scale, latency, cost, security.
+7. Prefer boring, proven patterns. Justify any new dependency and any new failure mode.
 
 ## Output (ADR-style)
 ```
 ## Context
 ## Decision (recommended approach)
-## Alternatives considered & why not
-## Consequences / trade-offs
+## Alternatives considered & why not   (incl. the do-nothing / simplest option)
+## Non-functional trade-offs (scale · latency · cost · security)
 ## Interfaces & data model
+## Failure & degradation
 ## Risks & mitigations
 ```
 

@@ -10,11 +10,14 @@ before it can merge.
 
 ## Sequence
 
-1. **Review** — run `/harness-claude:review` (delegate to `harness-claude:code-reviewer`) and, for any change touching
-   auth/input/queries/files/external-calls/crypto/secrets, `/harness-claude:security-review` (delegate
-   to `harness-claude:security-reviewer`). Run these **two in parallel** when the change is
-   security-sensitive; otherwise review first, then security.
-   → **HALT on any Critical or High finding** — fix, then re-review the changed lines.
+1. **Review** — run `/harness-claude:review` (delegate to `harness-claude:code-reviewer`); for any
+   change touching auth/input/queries/files/external-calls/crypto/secrets, also
+   `/harness-claude:security-review` (delegate to `harness-claude:security-reviewer`); and for any
+   change that **touched a user-facing surface** (UI/page/screen/component/form/mobile/CLI-TUI),
+   also `/harness-claude:design-review` (craft + a11y/UX gate). Run the applicable reviewers **in
+   parallel**; skip the ones that don't apply and say so.
+   → **HALT on any Critical/High (security/correctness) or Blocker (design) finding** — fix,
+   then re-review the changed lines.
 
 2. **`/harness-claude:test`** — run the full suite (in tmux if long) + coverage. Every acceptance
    criterion must have a test; coverage ≥ 80% on changed code. Add missing tests via
@@ -29,10 +32,11 @@ before it can merge.
    → **HALT at the git boundary:** do NOT commit/push/PR. Report "ready — say the word."
 
 ## Rules
-- Block, don't warn, on Critical/High security or correctness findings.
+- Block, don't warn, on Critical/High security or correctness findings, or design Blockers.
 - If a secret is exposed: stop, rotate, sweep for siblings.
 - Never run git write operations unless the user explicitly asks.
 
 ## Output
-Verify summary: review verdict, security verdict, coverage %, observed-working evidence,
-docs synced, "ready to commit/PR." Then optionally `/harness-claude:harness-maintain`.
+Verify summary: review verdict, security verdict, design verdict (or "skipped — no UI surface"),
+coverage %, observed-working evidence, docs synced, "ready to commit/PR." Then optionally
+`/harness-claude:harness-maintain`.

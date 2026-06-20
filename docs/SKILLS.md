@@ -13,9 +13,9 @@ and **pause at each gate for your input**. Not unattended runs.
 | Command | Phase | Runs |
 |---------|-------|------|
 | `/harness` | All | The full pipeline, with a checkpoint between every phase |
-| `/harness-plan` | Plan | `/spec` → `/research` → `/plan` → `/architect`* |
+| `/harness-plan` | Plan | `/spec` → `/research` → `/plan` → `/architect`* / `/design`* |
 | `/harness-implement` | Implement | `/implement` (TDD) → `/build-fix` |
-| `/harness-verify` | Verify | `/review` → `/security-review` → `/test` → `/verify` → `/ship` |
+| `/harness-verify` | Verify | `/review` → `/security-review` → `/design-review`* → `/test` → `/verify` → `/ship` |
 | `/harness-maintain` | Maintain | `/onboard`* → `/refactor-clean` |
 
 `*` = conditional (runs only when warranted).
@@ -31,7 +31,8 @@ and **pause at each gate for your input**. Not unattended runs.
 | `/spec` | Turn a vague request into a written spec with acceptance criteria | — |
 | `/research` | **Reuse-first:** search existing libs/registries/code for a ≥80% fit before writing new code | — |
 | `/plan` | Produce a phased, risk-assessed implementation plan from the spec | `planner` |
-| `/architect` | Make & record an architecture/design decision for load-bearing work | `architect` |
+| `/architect`* | Make & record a *system* design decision (ADR) for load-bearing work | `architect` |
+| `/design`* | Produce a product/UX/UI design brief for a user-facing surface — routes by surface to the harness's own craft rubrics (product-UI / aesthetic-direction) and overlays the a11y/UX floor | — |
 
 ### Implement phase
 
@@ -46,6 +47,7 @@ and **pause at each gate for your input**. Not unattended runs.
 |---------|--------------|--------------|
 | `/review` | Review changed code for quality, correctness, maintainability | `code-reviewer` |
 | `/security-review` | OWASP Top-10 + secret scan; blocks on Critical/High | `security-reviewer` |
+| `/design-review`* | Craft + a11y/UX gate for user-facing changes; blocks on Blockers | — |
 | `/test` | Run the suite, confirm coverage ≥ floor, add missing tests | — |
 | `/verify` | Run the app/feature and confirm it observably works | — |
 | `/ship` | Sync docs, prepare a clean commit/PR summary — **does not push** | — |

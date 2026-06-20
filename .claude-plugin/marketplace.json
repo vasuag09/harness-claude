@@ -13,8 +13,8 @@
     {
       "name": "harness-claude",
       "source": "./",
-      "description": "Lean full-SDLC harness: 7 rules, 25 skills, 7 agents, runtime hooks, memory persistence, and benchmark-gated cost/token optimization for TypeScript/JS and Python.",
-      "version": "0.8.0",
+      "description": "Lean full-SDLC harness: 7 rules, 27 skills, 7 agents, runtime hooks, memory persistence, a product/UX + system design altitude, and benchmark-gated cost/token optimization for TypeScript/JS and Python.",
+      "version": "0.9.0",
       "author": {
         "name": "Vasu Agrawal",
         "email": "vasuagrawal1040@gmail.com"

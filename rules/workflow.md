@@ -4,21 +4,25 @@ This harness runs a four-phase pipeline. Each phase has a skill; each skill can
 delegate to an agent. Move forward only when the current phase's exit criteria are met.
 
 ```
-PLAN ─────────────► IMPLEMENT ─────► VERIFY ─────────► MAINTAIN
-/spec  /research          /implement     /review            /refactor-clean
-/plan  /architect         /build-fix     /security-review   /onboard
-                                         /test  /verify
+PLAN ─────────────► IMPLEMENT ─────► VERIFY ─────────────► MAINTAIN
+/spec  /research          /implement     /review   /test          /refactor-clean
+/plan                     /build-fix     /security-review         /onboard
+/architect* /design*                     /design-review*  /verify
                                          /ship
         └────────── memory: /save-session · /resume-session (cross-cutting) ──────────┘
 ```
+
+`*` conditional — the **design gate**. `/architect` (system design) fires for load-bearing
+architecture; `/design` (product/UX) and its VERIFY counterpart `/design-review` fire for
+user-facing surfaces. A change can need one, both, or neither; internal/CLI work skips them.
 
 ## Phase exit criteria
 
 | Phase | Done when |
 |-------|-----------|
-| **Plan** | A written spec with acceptance criteria, a reuse decision, a phased task list, and (for non-trivial work) an architecture note exist. |
+| **Plan** | A written spec with acceptance criteria, a reuse decision, a phased task list, and — *when warranted* — an architecture note (`/architect`) and/or a product/UX design brief (`/design`) exist. |
 | **Implement** | Code matches the plan, builds clean, types/lint pass, tests written first and green. |
-| **Verify** | Code review + security review pass, coverage ≥ 80%, the app/feature observably works, docs synced. |
+| **Verify** | Code review + security review pass, coverage ≥ 80%, the app/feature observably works, **any user-facing surface passes `/design-review` (craft + a11y/UX floor)**, docs synced. |
 | **Maintain** | Dead code/debt removed; the change is documented and reversible. |
 
 ## Tooling defaults

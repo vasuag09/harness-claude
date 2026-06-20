@@ -81,7 +81,7 @@ It lives in its own repo and installs as a Claude Code **plugin/marketplace**, s
 | Layer | Where | Count | Role |
 |-------|-------|-------|------|
 | Rules | `rules/` | 7 | always-on guidance (cited by skills; imported by `CLAUDE.md`) |
-| Skills | `skills/<name>/SKILL.md` | 25 | 15 atomic `/spec … /ship` drivers + 5 phase orchestrators + 4 opt-in eval (`/eval` `/extract` `/benchmark` `/health`) + `/lazy` (generation reduction) |
+| Skills | `skills/<name>/SKILL.md` | 27 | 17 atomic `/spec … /ship` drivers (incl. the `/design` + `/design-review` design altitude) + 5 phase orchestrators + 4 opt-in eval (`/eval` `/extract` `/benchmark` `/health`) + `/lazy` (generation reduction) |
 | Agents | `agents/*.md` | 7 | scoped subagents the skills delegate to |
 | Hooks | `hooks/hooks.json` + `scripts/hooks/` | — | tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence, structural orientation, generation reduction |
 | MCPs | `.mcp.json` | 3 | memory · sequential-thinking · magic (load only when enabled) |
@@ -89,20 +89,24 @@ It lives in its own repo and installs as a Claude Code **plugin/marketplace**, s
 ### The pipeline
 
 ```
-PLAN ─────────────► IMPLEMENT ─────► VERIFY ─────────────► MAINTAIN
-/spec  /research          /implement     /review  /security-review   /refactor-clean
-/plan  /architect         /build-fix     /test    /verify  /ship      /onboard
+PLAN ─────────────────► IMPLEMENT ─────► VERIFY ─────────────────► MAINTAIN
+/spec  /research              /implement     /review  /security-review    /refactor-clean
+/plan  /architect* /design*   /build-fix     /design-review*  /test        /onboard
+                                             /verify  /ship
                   memory: /save-session · /resume-session (cross-cutting)
 ```
+
+`*` conditional **design gate** — `/architect` (system design) for load-bearing architecture;
+`/design` + `/design-review` (product/UX) for user-facing surfaces. A change needs one, both, or neither.
 
 **Phase orchestrators** run a whole phase in one command — thin wrappers that sequence
 the atomic skills, delegate to subagents, and pause for your input at each gate:
 
 | Command | Runs |
 |---------|------|
-| `/harness-plan` | spec → research → plan → architect* |
+| `/harness-plan` | spec → research → plan → architect* / design* |
 | `/harness-implement` | implement (TDD) → build-fix |
-| `/harness-verify` | review → security-review → test → verify → ship |
+| `/harness-verify` | review → security-review → design-review* → test → verify → ship |
 | `/harness-maintain` | onboard* → refactor-clean |
 | `/harness` | the full pipeline, with a checkpoint between phases |
 
@@ -181,7 +185,8 @@ to built-in tools and say so.
 | Item | Status | Fallback when absent |
 |------|--------|----------------------|
 | 7 agents (`harness-claude:*`) | **Bundled** | — (always present) |
-| 25 skills (`/harness-claude:*`) | **Bundled** | — (always present) |
+| 27 skills (`/harness-claude:*`) | **Bundled** | — (always present) |
+| design rubrics (`skills/design/references/`) | **Bundled** — self-contained, no external plugin | — (always present) |
 | 3 MCPs (memory · sequential-thinking · magic) | **Bundled**, load only when enabled | harness works without them |
 | `mgrep` | Optional companion | `Grep` / `Glob` |
 | `context7` | Optional companion | library's primary docs / web |

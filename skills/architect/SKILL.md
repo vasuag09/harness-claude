@@ -14,17 +14,28 @@ a cross-cutting change, or a refactor with several viable shapes. Skip for routi
 ## Do this
 1. **Delegate to the `harness-claude:architect` agent** with the problem, constraints, and the
    existing architecture it must fit.
-2. Require: recommended approach, alternatives considered (and why rejected),
-   consequences/trade-offs, interfaces & data model, risks & mitigations.
-3. Keep the recommendation decisive — one approach, justified.
+2. **Ground it before deciding:** name the architecture domain(s) the change touches and pull
+   the matching cues from `../design/references/architecture-domains.md` (API, caching,
+   cloud-native, message-queue, security). Use **context7** for live library/platform docs so
+   the design doesn't assume capabilities that don't exist.
+3. Require (each mandatory, not optional):
+   - recommended approach + interfaces & data model;
+   - **a do-nothing / simplest-possible alternative** considered explicitly (the YAGNI gate —
+     the cheapest thing that could work, and why it's insufficient if you reject it);
+   - other alternatives considered and why rejected;
+   - **explicit non-functional trade-offs** — scale, latency, cost, security — stated, not implied;
+   - **how it degrades under failure** (the unhappy path, not just the happy one);
+   - risks & mitigations.
+4. Keep the recommendation decisive — one approach, justified.
 
 ## Output — ADR
 ```
 ## Context
-## Decision
-## Alternatives & why not
-## Consequences / trade-offs
+## Decision (recommended approach)
+## Alternatives & why not   (incl. the do-nothing / simplest option)
+## Non-functional trade-offs (scale · latency · cost · security)
 ## Interfaces & data model
+## Failure & degradation
 ## Risks & mitigations
 ```
 
