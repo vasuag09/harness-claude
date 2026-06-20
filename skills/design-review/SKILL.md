@@ -23,7 +23,8 @@ UI- and security-sensitive.
    generic ideal. Apply the harness's review standard in `references/review-bar.md`.
 2. **See the whole first** (squint, before line-picking): does one thing lead, or is it a
    parking lot? Does it breathe, or a monotone grid? Does it look like *this* product? The
-   worst slop is compositional.
+   worst slop is compositional. Squint the *rendered* output, not the source — serve it over
+   http and screenshot (a headless browser usually blocks `file://`); a picture is worth 1000 tokens.
 3. **Run the lenses** independently (review-bar.md): Hierarchy · Type & color · Surfaces &
    depth · Composition & rhythm · States/polish/motion · Structure-reuse-content.
 4. **Apply the floor** (ux-floor.md): a11y §1 + touch §2 are **hard gates** — contrast 4.5:1,
