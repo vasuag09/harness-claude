@@ -48,6 +48,16 @@ fresh context. Each checkpoint reuses `/health` + `/eval` so a run **can't silen
 N consecutive failing checkpoints halt it and surface the criterion. Opt-in; the git
 boundary still holds — a run never commits/pushes/branches unless explicitly armed.
 
+## Multi-agent fan-out (opt-in)
+
+For a task that spans 3+ **independent** files (disjoint write-sets, no dependency between
+subtasks), `/orchestrate` decomposes it and runs the pieces in parallel. It is the lead: it
+assigns one writer per file, **verifies the write-sets are disjoint before fanning out**, drives
+the fan-out on the platform Workflow tool, and reconciles the workers' structured summaries into
+one result. The one-writer-per-file guarantee holds by construction (assignment-by-plan, not
+isolation). Opt-in; the git boundary still holds — no worker commits/pushes/branches unless
+explicitly armed. See `rules/agents.md` for the orchestration-mode decision rule.
+
 ## Don'ts
 
 - Don't skip phases. Don't start coding before a spec + plan exist for non-trivial work.

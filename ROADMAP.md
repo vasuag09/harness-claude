@@ -77,12 +77,19 @@ or neither; internal/CLI work skips them):
   best-effort in v1 — a plain `/loop` doesn't expose token spend; wall-clock + iteration cap
   carry the budget guarantee.)*
 
-## Phase 5 — Multi-agent orchestration  ⬅ next
-- Lead / worker fan-out with file-ownership locking (one writer per file).
-- Task decomposition by file / module / pipeline stage; parallel where independent.
-- **Adds:** an orchestrator skill coordinating multiple agents with explicit contracts.
+## Phase 5 — Multi-agent orchestration  ✅ (complete, v0.11.0)
+- ✅ `/orchestrate`: the third orchestration mode (parallel fan-out) alongside sequential and
+  iterative-retrieval — decomposes a task spanning 3+ independent files and runs the pieces in
+  parallel. Thin discipline layer over the platform Workflow tool (the engine), no new runtime.
+- ✅ One writer per file by **assignment-by-plan**: the lead assigns disjoint write-sets and
+  verifies pairwise disjointness before every parallel batch (refuses + names the conflict
+  otherwise). `isolation:'worktree'` kept only as a documented escape hatch.
+- ✅ Explicit worker contracts (one input, scoped tools, ownership boundary, structured-summary
+  output) + reconciliation that surfaces failed/dropped workers rather than swallowing them.
+- **Adds (v0.11.0):** `skills/orchestrate/{SKILL.md,worker-contract.md}`. No new agent (the
+  skill is the lead), no new dependency, no new MCP server. Opt-in, off by default.
 
-## Phase 6 — Computer-use agents
+## Phase 6 — Computer-use agents  ⬅ next
 - Browser / GUI automation (Playwright/Chrome) folded into `/verify` and beyond.
 - Agents that operate real interfaces, not just code.
 - **Adds:** computer-use tooling + safety scoping.

@@ -87,6 +87,12 @@ and **pause at each gate for your input**. Not unattended runs.
 |---------|--------------|--------------|
 | `/operate` | Supervise an unattended run on the platform's `/loop` + `/schedule` — halting guardrails (drift > budget > iteration-cap) + durable state (`.claude/runs/<id>.json`); self-checkpoints against `/health` + `/eval` so it can't silently drift. | `loop-operator` |
 
+### Multi-agent orchestration (Phase 5, opt-in)
+
+| Command | What it does | Delegates to |
+|---------|--------------|--------------|
+| `/orchestrate` | Decompose a task spanning 3+ independent files, fan out to workers in parallel on the platform Workflow tool, guarantee one-writer-per-file (assignment-by-plan), and reconcile structured summaries into one result. The third orchestration mode. | platform Workflow tool |
+
 ---
 
 ## Agents

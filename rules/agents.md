@@ -48,9 +48,24 @@ For exploratory/uncertain tasks where the first answer likely misses the *purpos
 **Key:** pass the subagent the *objective/purpose*, not just the literal query — it
 lacks the orchestrator's semantic context.
 
+### Parallel fan-out (the third mode — opt-in)
+For one task that splits into **independent** sub-tasks across many files. Invoke
+`/harness-claude:orchestrate`: it decomposes the task, assigns **one writer per file**,
+verifies the write-sets are pairwise disjoint, fans out the independent sub-tasks via the
+platform Workflow tool, and reconciles the workers' structured summaries into one result.
+
+1. Use only when sub-tasks are genuinely independent — **3+ files, disjoint write-sets, no
+   dependency** between them. If one sub-task needs another's output, it's sequential/iterative.
+2. The one-writer-per-file invariant holds **by assignment** (disjoint owners), checked before
+   every parallel batch — not by isolation.
+3. Workers honor the standing rules: cheapest-sufficient model, **summaries not raw dumps**,
+   minimum tool scope (read-only unless they own a writable file).
+
 ### Decision rule
 - Linear, scope clear, output shape known → **sequential**.
 - Open-ended research, ambiguous result, "find out X then decide" → **iterative**.
+- Independent sub-tasks, disjoint write-sets across many files → **parallel fan-out**
+  (`/harness-claude:orchestrate`).
 - A phase may use both: sequential overall, iterative within a research step.
 
 ## Scoping

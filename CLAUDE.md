@@ -44,7 +44,10 @@ atomic skills, delegate to subagents, and halt for your input at each gate):
   default via a hook, intensity `lite|full|ultra`), plus `/operate` (Phase 4 · long-running
   agents — supervises an unattended `/loop`/`/schedule` run with halting guardrails +
   durable `.claude/runs/<id>.json` state, self-checkpointing against `/health` + `/eval`;
-  opt-in, off by default)
+  opt-in, off by default), plus `/orchestrate` (Phase 5 · multi-agent orchestration — the
+  third orchestration mode: decomposes a task across 3+ independent files, fans out to
+  parallel workers on the platform Workflow tool with one-writer-per-file by assignment, and
+  reconciles their summaries; opt-in, off by default)
 - **agents/** — 8 scoped subagents the skills delegate to
 - **hooks/** + **scripts/hooks/** — runtime automations (tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence, structural orientation, generation reduction)
 - **.mcp.json** — memory · sequential-thinking · magic (load only when the plugin is enabled)
@@ -54,7 +57,8 @@ atomic skills, delegate to subagents, and halt for your input at each gate):
 - **Token optimization:** delegate to the cheapest sufficient model; subagents return
   summaries, not raw dumps. Benchmarking measures value; it is not the runtime strategy.
 - **Orchestration:** sequential phases by default; iterative retrieval (≤3 cycles) when
-  a subagent's return is insufficient. See rules/agents.md.
+  a subagent's return is insufficient; parallel fan-out across independent files via
+  `/orchestrate` (opt-in). See rules/agents.md.
 - **Modular & lean:** files <800 lines, immutable patterns, validated inputs.
 - **Search with mgrep, not grep.** Run long commands in tmux. Use context7 for live docs.
 - **Git boundary:** never commit/push/branch unless the user explicitly asks.
