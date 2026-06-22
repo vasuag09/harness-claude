@@ -122,10 +122,24 @@ or neither; internal/CLI work skips them):
   are leads), no new dependency, no new MCP server, no new runtime. Opt-in, off by default; the git
   boundary and the new arm-to-fire boundary both hold.
 
-## Phase 6 — Computer-use agents  ⬅ next
-- Browser / GUI automation (Playwright/Chrome) folded into `/verify` and beyond.
-- Agents that operate real interfaces, not just code.
-- **Adds:** computer-use tooling + safety scoping.
+## Phase 6 — Computer-use agents  ⬅ next (re-scoped — see below)
+**Scope correction.** The original framing — "browser/GUI automation (Playwright/Chrome) folded
+into `/verify`" — does not earn its keep as written:
+- The harness ships **no UI of its own** to verify; it's markdown + scripts. The only thing it
+  could drive a browser *for* is a downstream project's UI — and that project brings its own
+  Playwright/e2e tooling, so the harness would be duplicating what consumers already have.
+- **Scripted browser automation is a solved, non-delta capability** (Playwright + an e2e-runner
+  agent). The harness intentionally ships neither today; recommending Playwright in `rules/testing.md`
+  is the right altitude for a distributable plugin.
+
+**Genuine delta (the only part worth building).** Computer-use ≠ Playwright on two axes Playwright
+can't reach: driving surfaces with **no DOM** (native desktop apps, Electron, canvas/WebGL, OS
+dialogs) and **vision-based** targeting (click from a screenshot, no selectors). That is the slice
+to reserve Phase 6 for — explicitly **not** re-implementing scripted browser automation.
+
+- **Gate (YAGNI):** build only when a consuming project presents a real non-DOM / vision surface
+  to verify. Until then this phase stays parked — no speculative tooling shipped.
+- **Adds (if/when unblocked):** vision-based computer-use tooling + safety scoping, gated opt-in.
 
 ---
 
