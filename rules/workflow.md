@@ -4,15 +4,17 @@ This harness runs a four-phase pipeline. Each phase has a skill; each skill can
 delegate to an agent. Move forward only when the current phase's exit criteria are met.
 
 ```
-PLAN ─────────────► IMPLEMENT ─────► VERIFY ─────────────► MAINTAIN
-/spec  /research          /implement     /review   /test          /refactor-clean
-/plan                     /build-fix     /security-review         /onboard
-/architect* /design*                     /design-review*  /verify
-                                         /ship
+DISCOVER† ─► PLAN ─────────────► IMPLEMENT ─────► VERIFY ─────────────► MAINTAIN
+/discover    /spec  /research          /implement     /review   /test          /refactor-clean
+             /plan                     /build-fix     /security-review         /onboard
+             /architect* /design*                     /design-review*  /verify
+                                                       /ship
         └────────── memory: /save-session · /resume-session (cross-cutting) ──────────┘
 ```
 
-`*` conditional — the **design gate**. `/architect` (system design) fires for load-bearing
+`†` conditional — the **discovery entry**. `/discover` fires *above* `/spec` only when intent is
+vague (you want *something* but can't yet state *what*); an already-clear request skips it and starts
+at `/spec`. `*` conditional — the **design gate**. `/architect` (system design) fires for load-bearing
 architecture; `/design` (product/UX) and its VERIFY counterpart `/design-review` fire for
 user-facing surfaces. A change can need one, both, or neither; internal/CLI work skips them.
 
@@ -37,6 +39,19 @@ user-facing surfaces. A change can need one, both, or neither; internal/CLI work
 In the Plan phase, `/research` searches existing libraries, registries, and code
 (GitHub, context7, package registries) for something that already solves ≥80% of the
 problem. Adopt/port proven code over hand-rolling. Document the decision in the spec.
+
+## Discovery entry (opt-in, conditional)
+
+The pipeline's front door (`/spec`) assumes you can already state *what* you want. When intent is
+**vague** — you want *something* but can't name the shape, or you're asking "what would make the best
+use of X?" — `/discover` is the entry *above* `/spec`. It's a **divergent→convergent** move:
+interrogate the real goal (Socratic, via focused questions), map a **bounded** set of ≤5 grounded
+options, then **force convergence to exactly one** recommended direction, and hand a one-screen *intent
+statement* to `/spec`. The discipline is the convergence: it ends in a **decision, not a brainstorm** —
+an unranked option dump is an invalid exit. It's strictly upstream of `/spec`/`/research`/`/design`
+(it produces the request; it does **not** write acceptance criteria — that stays `/spec`'s job), and
+**conditional**: an already-clear request is detected and routed straight to `/spec` with no interview.
+Read-only; the git boundary holds.
 
 ## Long-running runs (opt-in)
 

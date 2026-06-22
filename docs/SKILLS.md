@@ -24,6 +24,14 @@ and **pause at each gate for your input**. Not unattended runs.
 
 ## Atomic skills
 
+### Discovery entry (opt-in, conditional)
+
+The entry *above* `/spec`, for when intent is vague — you want *something* but can't yet state *what*.
+
+| Command | What it does | Delegates to |
+|---------|--------------|--------------|
+| `/discover`† | Turn vague intent into a framed problem + **one** chosen direction `/spec` can consume — interrogate the real goal (Socratic), map **≤5** grounded options, then **force convergence** to a single recommendation (an unranked dump is an invalid exit). Conditional: an already-clear request is detected and routed straight to `/spec` with no interview. Produces an intent statement, **not** acceptance criteria (that stays `/spec`'s job). | `/spec` (hand-off); `/research` (heavy feasibility) |
+
 ### Plan phase
 
 | Command | What it does | Delegates to |

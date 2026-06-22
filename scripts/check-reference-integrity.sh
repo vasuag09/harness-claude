@@ -25,7 +25,7 @@ NS="$(node -e 'process.stdout.write(require("./.claude-plugin/plugin.json").name
 # so a name that is a substring of another (e.g. `fix` within `build-fix`) does not
 # mis-match — the surrounding backtick / token boundary anchors each alternative.
 AGENTS='planner|architect|code-reviewer|security-reviewer|tdd-guide|build-error-resolver|refactor-cleaner|loop-operator'
-SKILLS='spec|research|plan|architect|design|implement|build-fix|fix|review|security-review|design-review|test|verify|ship|refactor-clean|onboard|operate|orchestrate|harness|harness-plan|harness-implement|harness-verify|harness-maintain|save-session|resume-session|deploy|observe'
+SKILLS='spec|research|plan|architect|design|implement|build-fix|fix|review|security-review|design-review|test|verify|ship|refactor-clean|onboard|operate|orchestrate|harness|harness-plan|harness-implement|harness-verify|harness-maintain|save-session|resume-session|deploy|observe|discover'
 
 scan_dirs=(skills agents)
 fail=0

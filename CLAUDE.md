@@ -10,14 +10,16 @@ other projects), see README → "Make the rules global (opt-in)".
 ## The pipeline
 
 ```
-PLAN ─────────────────► IMPLEMENT ─────► VERIFY ─────────────────► MAINTAIN
-/spec  /research              /implement     /review  /security-review    /refactor-clean
-/plan  /architect* /design*   /build-fix     /design-review*  /test        /onboard
-                                             /verify  /ship
+DISCOVER† ─► PLAN ───────────► IMPLEMENT ─────► VERIFY ─────────────────► MAINTAIN
+/discover    /spec  /research        /implement     /review  /security-review    /refactor-clean
+             /plan  /architect* /design*  /build-fix  /design-review*  /test       /onboard
+                                                      /verify  /ship
                   memory: /save-session · /resume-session (cross-cutting)
 ```
 
-`*` = the conditional **design gate**: `/architect` (system design) for load-bearing
+`†` = the conditional **discovery entry**: `/discover` fires *above* `/spec` only when intent is vague
+(you want *something* but can't yet state *what*) — it frames the problem and converges to one direction
+for `/spec`; an already-clear request skips it. `*` = the conditional **design gate**: `/architect` (system design) for load-bearing
 architecture, `/design` + `/design-review` (product/UX) for user-facing surfaces. A change
 needs one, both, or neither — internal/CLI work (like this harness) skips them.
 
@@ -32,10 +34,12 @@ atomic skills, delegate to subagents, and halt for your input at each gate):
 ## What's here
 
 - **rules/** — always-on guidance (engineering, security, testing, typescript, python, workflow, agents)
-- **skills/** — the 17 pipeline drivers you invoke as `/spec`, `/plan`, `/review`, ...
-  (incl. the **design altitude**: `/design` produces a product/UX/UI brief in PLAN and
-  `/design-review` gates craft + a11y in VERIFY — both conditional on a user-facing surface,
-  driven by the harness's own self-contained design rubrics under `skills/design/references/`;
+- **skills/** — the 18 pipeline drivers you invoke as `/discover`, `/spec`, `/plan`, `/review`, ...
+  (incl. the **discovery entry**: `/discover` is the step *above* `/spec` — when intent is vague it
+  turns it into a framed problem + one chosen direction, then hands off to `/spec`; conditional/opt-in,
+  an already-clear request skips it; and the **design altitude**: `/design` produces a product/UX/UI
+  brief in PLAN and `/design-review` gates craft + a11y in VERIFY — both conditional on a user-facing
+  surface, driven by the harness's own self-contained design rubrics under `skills/design/references/`;
   plus four opt-in eval skills: `/eval` checkpoints a change against its spec's acceptance
   criteria, `/extract` turns a repeatable workflow into a staged skill proposal,
   `/benchmark` measures whether a component earns its keep via pass@k/pass^k, and `/health`

@@ -122,6 +122,24 @@ or neither; internal/CLI work skips them):
   are leads), no new dependency, no new MCP server, no new runtime. Opt-in, off by default; the git
   boundary and the new arm-to-fire boundary both hold.
 
+## Discovery phase (`/discover`)  ✅ (complete, v0.14.0)
+- ✅ Closes the one altitude the pipeline had nothing for — the step *above* `/spec`. The front door
+  assumed you could already state *what* you want; `/discover` serves the vague itch where you don't yet
+  know the shape of the answer ("make this better", "what would make the best use of X?").
+- ✅ **Divergent→convergent** discipline: interrogate the real goal (Socratic, via focused questions) →
+  map a **bounded** set of ≤5 grounded options → **force convergence to exactly one** recommended
+  direction → hand a one-screen *intent statement* to `/spec`. The convergence is the point — it ends in
+  a **decision, not a brainstorm**; an unranked option dump is an invalid exit.
+- ✅ **Conditional & upstream:** an already-clear request is detected and routed straight to `/spec` with
+  no interview (anti-ceremony, like the design gate). Strictly upstream of `/spec`/`/research`/`/design` —
+  it produces the request; it does **not** write acceptance criteria (that stays `/spec`'s job).
+- ✅ **Reuse, don't rebuild:** ports `prompt-optimizer`'s intake gate (clarify-if-vague) and `shape`'s
+  interview→brief shape; the divergent→convergent core is the genuine new part nothing else covered.
+- **Adds (v0.14.0):** `skills/discover/SKILL.md` (32→33 skills). No new agent (the skill is the lead),
+  no new dependency, no new MCP server, no new runtime. Opt-in/conditional, off by default; read-only,
+  git boundary holds. *(Wiring `/discover` into `/harness-plan` as a pre-step is a noted follow-up seam —
+  shipped standalone first, mirroring how `/orchestrate` preceded its `/implement` wiring.)*
+
 ## Phase 6 — Computer-use agents  ⬅ next (re-scoped — see below)
 **Scope correction.** The original framing — "browser/GUI automation (Playwright/Chrome) folded
 into `/verify`" — does not earn its keep as written:
