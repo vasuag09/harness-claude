@@ -50,7 +50,12 @@ atomic skills, delegate to subagents, and halt for your input at each gate):
   reconciles their summaries; opt-in, off by default), plus `/fix` (bug-fix fast lane — the
   parallel entry for fixing something already broken: reproduce-as-a-failing-test first, name the
   root cause, write a minimal fix-plan, then hand off to `/implement` → verify → ship; reuses
-  existing agents, no new agent/dep; opt-in)
+  existing agents, no new agent/dep; opt-in), plus `/deploy` + `/observe` (release & feedback
+  loop — the step *past* `/ship` and the step that brings prod *back in*, closing the pipeline into
+  a loop: `/deploy` orchestrates the project's own deploy mechanism with an **arm-to-fire** HALT
+  before any outward action + smoke-tests the deployed artifact + guards a rollback; `/observe`
+  takes a brought signal — stack trace/log/error/issue URL — locates the failing area, shapes a
+  repro seed, and routes to `/fix`; both opt-in, no new agent/dep)
 - **agents/** — 8 scoped subagents the skills delegate to
 - **hooks/** + **scripts/hooks/** — runtime automations (tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence, structural orientation, generation reduction)
 - **.mcp.json** — memory · sequential-thinking · magic (load only when the plugin is enabled)

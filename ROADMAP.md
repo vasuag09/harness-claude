@@ -104,6 +104,24 @@ or neither; internal/CLI work skips them):
 - **Adds (v0.12.0):** `skills/fix/SKILL.md`. No new agent (the skill is the lead), no new
   dependency, no new MCP server. Opt-in, off by default; git boundary holds.
 
+## Release & feedback loop (`/deploy` + `/observe`)  ✅ (complete, v0.13.0)
+- ✅ Closes the pipeline into a **loop** — it stopped at the repo edge (`/ship` prepares a commit/PR);
+  these two opt-in skills bracket the live environment: `/ship → /deploy → (prod) → /observe → /fix → …`.
+- ✅ `/deploy`: orchestrates the project's **own existing** deploy mechanism (detect `vercel.json` /
+  `Dockerfile` / `Makefile` / CI / `package.json` scripts — never prescribe a stack; delegate to a
+  matching platform skill like `vercel:deploy` when present), names the rollback path, runs pre-deploy
+  smoke, then **arm-to-fire HALTs** — no real outward action until an explicit `arm deploy`. On arm it
+  deploys in tmux, smoke-tests the **deployed** artifact (reusing `/health`), and guards a rollback
+  (`arm rollback`) when that smoke fails. Deploy is more outward-facing than `git push`, so it extends
+  the harness's boundary discipline rather than bypassing it.
+- ✅ `/observe`: **bring-a-signal** triage — take a pasted stack trace / log / error / issue URL (no
+  polling, no credentials, no new MCP), locate the failing area in code (mgrep/graph), shape a repro
+  **seed**, and route to `/fix`. It does **not** write the finished failing test — that stays `/fix`'s
+  reproduce-first step. Active monitoring (poll Sentry/Datadog) is a noted seam, deferred (YAGNI).
+- **Adds (v0.13.0):** `skills/deploy/SKILL.md` + `skills/observe/SKILL.md`. No new agent (both skills
+  are leads), no new dependency, no new MCP server, no new runtime. Opt-in, off by default; the git
+  boundary and the new arm-to-fire boundary both hold.
+
 ## Phase 6 — Computer-use agents  ⬅ next
 - Browser / GUI automation (Playwright/Chrome) folded into `/verify` and beyond.
 - Agents that operate real interfaces, not just code.

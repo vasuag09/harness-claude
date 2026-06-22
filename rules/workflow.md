@@ -68,6 +68,28 @@ it does the bug-specific part — **reproduce as a failing test FIRST**, name th
 them. Distinct from `/build-fix` (which is for build/type/compile errors, not behavioral bugs).
 Opt-in; the git boundary still holds — `/fix` never commits/pushes/branches.
 
+## Release & feedback loop (opt-in)
+
+The pipeline above is a **line** that stops at the repo edge: `/ship` prepares a clean commit/PR and
+halts. Two opt-in skills close it into a **loop** by bracketing the live environment:
+
+```
+/ship → /deploy → (prod) → /observe → /fix → … back into the pipeline
+```
+
+- **`/deploy`** — the first step *past* the repo. It orchestrates the project's **own existing** deploy
+  mechanism (detects `vercel.json` / `Dockerfile` / `Makefile` / CI / `package.json` scripts — never
+  prescribes a stack), names the rollback path, runs pre-deploy smoke, then **arm-to-fire HALTs**:
+  no real outward action until you type `arm deploy`. On arm it deploys in tmux, smoke-tests the
+  *deployed* artifact (reusing `/health`), and guards a rollback (`arm rollback`) if that smoke fails.
+- **`/observe`** — the step that brings production *back in*. You hand it a signal (stack trace, log,
+  error, issue URL — **bring-a-signal**, no polling/credentials/MCP); it locates the failing area in
+  code and shapes a repro seed, then routes to `/fix`. It does **not** write the finished failing test
+  — that stays `/fix`'s job.
+
+Both are opt-in and off by default. The git boundary still holds, and the **arm-to-fire** boundary
+holds absolutely — `/deploy` performs no outward action without an explicit arm.
+
 ## Don'ts
 
 - Don't skip phases. Don't start coding before a spec + plan exist for non-trivial work.
@@ -75,3 +97,5 @@ Opt-in; the git boundary still holds — `/fix` never commits/pushes/branches.
 - Don't write extracted/learned skills automatically — stage them for approval.
 - Don't let a long `/operate` run continue past a drift halt — stop, surface the failing
   criterion, and fix the cause; never bump the run id to dodge a guardrail.
+- Don't fire a `/deploy` (or rollback) without the explicit `arm deploy` / `arm rollback` signal —
+  "the plan looks fine" is not an arm; the arm-to-fire HALT is a hard stop.

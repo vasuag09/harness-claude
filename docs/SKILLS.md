@@ -99,6 +99,15 @@ and **pause at each gate for your input**. Not unattended runs.
 |---------|--------------|--------------|
 | `/orchestrate` | Decompose a task spanning 3+ independent files, fan out to workers in parallel on the platform Workflow tool, guarantee one-writer-per-file (assignment-by-plan), and reconcile structured summaries into one result. The third orchestration mode. | platform Workflow tool |
 
+### Release & feedback loop (opt-in)
+
+Close the pipeline into a loop — the step *past* `/ship` and the step that brings prod *back in*: `/ship → /deploy → (prod) → /observe → /fix → …`
+
+| Command | What it does | Delegates to |
+|---------|--------------|--------------|
+| `/deploy` | After `/ship`: detect the project's **own existing** deploy mechanism (never prescribe a stack), name the rollback path, run pre-deploy smoke, then **arm-to-fire HALT** (no outward action without `arm deploy`). On arm: deploy in tmux, smoke-test the **deployed** artifact (reusing `/health`), guarded rollback (`arm rollback`) on failure. | `build-error-resolver` (mid-deploy build breaks); external platform deploy skill (e.g. `vercel:deploy`) when one is detected |
+| `/observe` | Take a **brought** signal (stack trace, log, error, issue URL — no polling/credentials/MCP), locate the failing area in code (mgrep/graph), shape a repro **seed**, and route to `/fix`. Does **not** write the finished failing test — that stays `/fix`'s job. | `/fix` (hand-off) |
+
 ---
 
 ## Agents
