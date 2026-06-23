@@ -44,7 +44,7 @@ search and hands the chosen direction to `/harness-claude:spec` for criteria.
    vague ask — ask **focused** questions via `AskUserQuestion` (group them; offer concrete options, not
    open-ended prose). If `AskUserQuestion` is unavailable, ask the same questions inline. Do **not**
    invent a direction and run with it unilaterally — pull the intent out first. (AC-5)
-2. **Map the opportunity space — bounded.** Generate **at most 5** candidate directions, each one line:
+2. **Map the opportunity space — bounded.** If step 1's answer is still a *category* (e.g. "novel," "make it better") rather than a direction, ask **one** more focused question to pin the sub-axis before mapping — don't map against a guess. Generate **at most 5** candidate directions, each one line:
    what it is, who it serves, rough value-vs-effort. Ground them in feasibility and fit (a light
    `mgrep` / codebase pass, what the project already has) — not pure speculation. Defer any *heavy*
    reuse search to `/harness-claude:research`; this is a quick reality check, not the full hunt.
