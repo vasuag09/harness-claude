@@ -44,9 +44,15 @@ search and hands the chosen direction to `/harness-claude:spec` for criteria.
    vague ask — ask **focused** questions via `AskUserQuestion` (group them; offer concrete options, not
    open-ended prose). If `AskUserQuestion` is unavailable, ask the same questions inline. Do **not**
    invent a direction and run with it unilaterally — pull the intent out first. (AC-5)
-2. **Map the opportunity space — bounded.** If step 1's answer is still a *category* (e.g. "novel," "make it better") rather than a direction, ask **one** more focused question to pin the sub-axis before mapping — don't map against a guess. Generate **at most 5** candidate directions, each one line:
-   what it is, who it serves, rough value-vs-effort. Ground them in feasibility and fit (a light
-   `mgrep` / codebase pass, what the project already has) — not pure speculation. Defer any *heavy*
+2. **Map the opportunity space — bounded.** If step 1's answer is still a *category* (e.g. "novel,"
+   "make it better") rather than a direction, **do not ask the user to sub-categorize it in the
+   abstract** — that fails. A vague intent means they have no pre-formed sub-axis to name; offering
+   abstract "flavors" to choose between gets "none of these fit" (lived failure mode). Instead
+   **ground first, then show concrete**: do the light `mgrep` / codebase pass *now*, then put the
+   candidate directions in front of them as **concrete things to react to** — people recognize the
+   right direction when they see it far more reliably than they can synthesize it from axes. Generate
+   **at most 5** candidates, each one line: what it is, who it serves, rough value-vs-effort, grounded
+   in feasibility and fit (what the project already has) — not pure speculation. Defer any *heavy*
    reuse search to `/harness-claude:research`; this is a quick reality check, not the full hunt.
    Never dump an unbounded list. (AC-1, AC-7)
 3. **CONVERGE — pick exactly one (the non-negotiable step).** End with **one** recommended direction +
