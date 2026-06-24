@@ -12,8 +12,11 @@ Goal: a plan an executor (you or a subagent) can follow without re-deriving cont
    the reuse decision, and the objective/purpose (not just a one-line query).
 2. For small/linear work, plan inline using the same shape.
 3. Break work into **phases**: each small, independently verifiable, with an exit check.
-4. Surface risks, dependencies, and ordering explicitly. Note where you'll need an
-   architecture decision (`/harness-claude:architect`) vs. where the path is obvious.
+4. Surface risks, dependencies, and ordering explicitly. **Red-team the plan before
+   handing it off** — assume it already failed and ask why; attack your own draft for
+   hidden assumptions and missing edge cases, not just the obvious risks. Note where
+   you'll need an architecture decision (`/harness-claude:architect`) vs. where the path
+   is obvious.
 
 ## Output
 ```
