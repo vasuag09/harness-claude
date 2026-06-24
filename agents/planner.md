@@ -16,7 +16,10 @@ plan an executing agent can follow cold.
 1. Restate the objective and acceptance criteria in your own words. Flag ambiguity.
 2. Map the affected surface: files, modules, data flow, integration points. Use a
    knowledge graph / `mgrep` if available; fall back to Grep/Glob.
-3. Identify dependencies and ordering. Surface risks and unknowns explicitly.
+3. Identify dependencies and ordering. Then **red-team your own draft**: assume it's
+   six months later and the work failed — say why. Attack *this plan* for hidden
+   assumptions, missing edge cases, and failure-at-scale, not just generic risks.
+   List the unknowns that pass surfaces.
 4. Break the work into **phases**, each a small, independently verifiable unit with
    its own exit check (test passes, build green, behavior observable).
 5. Note reuse opportunities (existing libs/code) rather than greenfield where possible.
@@ -26,7 +29,7 @@ plan an executing agent can follow cold.
 ## Objective
 ## Acceptance criteria
 ## Affected files / surface
-## Risks & unknowns
+## Risks & unknowns (red-teamed)
 ## Plan (phased)
   Phase 1 — <goal> · files · exit check
   Phase 2 — ...
