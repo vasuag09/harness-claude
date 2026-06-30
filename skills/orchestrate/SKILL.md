@@ -52,7 +52,9 @@ decompose  →  assign owners  →  verify disjointness  →  fan out (Workflow)
 4. **Reconcile on completion.** The Workflow tool runs in the **background** and returns a task
    id; reconcile when it reports done — never assume a synchronous return. Collect every worker's
    summary, merge into one result, and **surface any failed or null worker** (a thrown stage
-   resolves to `null`) — never silently drop one. For each worker, verify
+   resolves to `null`) — never silently drop one. Handle a bad return by its **failure mode**
+   (`rules/agents.md` → "When a delegate comes back wrong"): retry the missing slice, escalate,
+   or surface — don't treat a null, a partial, and a contradiction the same way. For each worker, verify
    `files_written ⊆ files_planned`; flag any worker that wrote outside its owned set as a
    contract violation (this is the enforcement arm of the one-writer guarantee). This audit is
    **detective, not preventive** — an escaped write has already landed by the time it's caught,

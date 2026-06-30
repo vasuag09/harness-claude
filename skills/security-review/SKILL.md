@@ -13,8 +13,9 @@ Goal: no Critical/High vulnerability and no leaked secret ships.
    (SQL/command/deserialization), XSS, broken access control, SSRF, path traversal,
    weak crypto, missing validation, error leakage, vulnerable deps. It also runs a
    secret check against the diff.
-3. For each Critical/High: fix before continuing. If a secret is exposed — **stop,
-   rotate it, then sweep** for the same class elsewhere.
+3. For each Critical/High: fix before continuing, **and leave a regression test that fails on the
+   vulnerability and passes after the fix** — so the same hole can't silently reappear. If a secret
+   is exposed — **stop, rotate it, then sweep** for the same class elsewhere.
 
 ## When to invoke
 Always for auth/payments/user-data/file/external-call changes. For purely internal,

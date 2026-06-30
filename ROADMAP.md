@@ -140,6 +140,22 @@ or neither; internal/CLI work skips them):
   git boundary holds. *(Wiring `/discover` into `/harness-plan` as a pre-step is a noted follow-up seam —
   shipped standalone first, mirroring how `/orchestrate` preceded its `/implement` wiring.)*
 
+## Refinements (v0.14.1)  ✅
+Ports from an external-review sweep (`msitarzewski/agency-agents`, SDLC subset) — technique only,
+no agent files imported. Edits to existing prompts; **no new skill/agent/dependency/runtime**.
+- **Tier-1 ports:** `/verify` adversarial default (NEEDS-WORK until evidence) · `/architect`
+  design-time threat model (4 abuse Qs + trust boundaries, conditional) · `/security-review`
+  regression-test-per-vuln · `/design-review` manual-AT protocol + WCAG-SC numbering · `/ship`
+  Divio doc-types + run-every-example · `/research` build-vs-buy tie-breaker. (Agent mirrors:
+  `architect.md`, `security-reviewer.md`.)
+- **Tier-2 #2:** `rules/agents.md` gains a delegation **failure-mode table** (null/partial/
+  contradiction/off-target/runaway/oversized) + a 3-rung fallback ladder; `/orchestrate` reconcile
+  routes bad workers by mode. *Deliberately refused as over-engineering at our scale:* per-agent
+  trace_id infra, context-budget math model, topology catalog, circuit-breaker code (already covered
+  by Workflow ids / `/operate` guardrails / summaries-not-dumps).
+- **Parked:** self-eval of skill/agent prompts (Tier-2 #1 — strongest structural gap, needs its own
+  spec); perf-verification (Tier-2 #3 — irrelevant until a web project is dogfooded).
+
 ## Phase 6 — Computer-use agents  ⬅ next (re-scoped — see below)
 **Scope correction.** The original framing — "browser/GUI automation (Playwright/Chrome) folded
 into `/verify`" — does not earn its keep as written:
