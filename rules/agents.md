@@ -68,6 +68,24 @@ platform Workflow tool, and reconciles the workers' structured summaries into on
   (`/harness-claude:orchestrate`).
 - A phase may use both: sequential overall, iterative within a research step.
 
+## When a delegate comes back wrong
+
+Delegation fails in distinct ways that need distinct responses — don't treat every bad
+return the same. Name the mode, then apply the response:
+
+| Mode | What it looks like | Response |
+|------|--------------------|----------|
+| **Null / died** | threw, timed out, returned nothing | retry once with the same brief; still null → surface it and continue the batch (one dead worker doesn't block the rest) |
+| **Partial** | did some of the work, not all | keep what's valid; re-dispatch **only the missing slice**, not the whole task |
+| **Contradiction** | two workers disagree | don't pick blindly — re-check the source yourself, or surface both with the conflict named |
+| **Off-target** | answered, but missed the *purpose* | iterative-retrieval (≤3 cycles): re-ask with the *objective*, not just the literal query |
+| **Runaway** | not terminating, looping | cap and abort (the `/harness-claude:operate` drift/budget/iteration guardrail) |
+| **Oversized** | dumped raw output instead of a summary | reject and re-brief — summaries-not-dumps is a contract, not a preference |
+
+**Fallback ladder** (when a retry is warranted): retry with a sharper brief → escalate the
+model one tier (Sonnet → Opus) → surface to the user. Cap the whole ladder at the **≤3-cycle**
+iterative-retrieval limit; past that, stop and report rather than burning more turns.
+
 ## Scoping
 
 Give each agent the minimum tool set it needs. Reviewers are read-only; resolvers may

@@ -14,7 +14,7 @@
       "name": "harness-claude",
       "source": "./",
       "description": "Lean full-SDLC harness: 7 rules, 33 skills, 8 agents, runtime hooks, memory persistence, a vague-intent discovery entry above /spec, a product/UX + system design altitude, benchmark-gated cost/token optimization, guarded long-running agent runs, multi-agent parallel fan-out, a bug-fix fast lane, and a release & feedback loop (deploy + observe) for TypeScript/JS and Python.",
-      "version": "0.14.0",
+      "version": "0.14.1",
       "author": {
         "name": "Vasu Agrawal",
         "email": "vasuagrawal1040@gmail.com"

@@ -28,7 +28,11 @@ UI- and security-sensitive.
 3. **Run the lenses** independently (review-bar.md): Hierarchy · Type & color · Surfaces &
    depth · Composition & rhythm · States/polish/motion · Structure-reuse-content.
 4. **Apply the floor** (ux-floor.md): a11y §1 + touch §2 are **hard gates** — contrast 4.5:1,
-   visible focus, keyboard nav, 44px targets, reduced-motion. A failure here is a Blocker, full stop.
+   visible focus, keyboard nav, 44px targets, reduced-motion. Automated checks catch ~30%; the floor
+   isn't met until you've **manually exercised it** — keyboard-only through the whole flow, a screen
+   reader (VoiceOver/NVDA) over the key path, and 200%/400% zoom without breakage. Cite the specific
+   **WCAG success criterion** per failure (e.g. 1.4.3 contrast, 2.1.1 keyboard, 2.4.7 focus-visible).
+   A failure here is a Blocker, full stop.
 5. **Score and filter.** Tag each finding Blocker / Should-fix / Note. Cut false positives:
    taste, a bold choice working as intended, out-of-scope/untouched lines, anything
    `system.md` ratifies, lint/format concerns. A few high-conviction findings beat forty nitpicks.

@@ -21,7 +21,10 @@ reviewer can both trust.
    real alternative (the YAGNI gate). For the recommended one, state the trade-offs you
    accept and why each alternative — including "do nothing" — loses.
 5. Define the seams: modules, interfaces, data model, error/edge handling, and **how it
-   degrades under failure** (the unhappy path is mandatory).
+   degrades under failure** (the unhappy path is mandatory). **When the design crosses a trust
+   boundary** (untrusted input, auth, secrets, external calls), threat-model it: what can be
+   *abused*, what happens when it *fails open*, who *benefits* from breaking it, what's the
+   *blast radius* — and name the trust boundaries; skip when nothing untrusted crosses it.
 6. State the **non-functional trade-offs explicitly** — scale, latency, cost, security.
 7. Prefer boring, proven patterns. Justify any new dependency and any new failure mode.
 
@@ -33,6 +36,7 @@ reviewer can both trust.
 ## Non-functional trade-offs (scale · latency · cost · security)
 ## Interfaces & data model
 ## Failure & degradation
+## Threat model (only if it crosses a trust boundary)
 ## Risks & mitigations
 ```
 

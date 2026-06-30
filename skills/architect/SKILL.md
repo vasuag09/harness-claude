@@ -25,6 +25,10 @@ a cross-cutting change, or a refactor with several viable shapes. Skip for routi
    - other alternatives considered and why rejected;
    - **explicit non-functional trade-offs** — scale, latency, cost, security — stated, not implied;
    - **how it degrades under failure** (the unhappy path, not just the happy one);
+   - **a quick threat model when the design crosses a trust boundary** (handles untrusted input,
+     auth, secrets, or external calls): ask the four — what can be *abused*, what happens when it
+     *fails open*, who *benefits* from breaking it, what's the *blast radius* — and name the trust
+     boundaries. Skip when nothing untrusted crosses the design;
    - risks & mitigations.
 4. Keep the recommendation decisive — one approach, justified.
 
@@ -36,6 +40,7 @@ a cross-cutting change, or a refactor with several viable shapes. Skip for routi
 ## Non-functional trade-offs (scale · latency · cost · security)
 ## Interfaces & data model
 ## Failure & degradation
+## Threat model (only if it crosses a trust boundary)
 ## Risks & mitigations
 ```
 

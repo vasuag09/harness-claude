@@ -19,6 +19,9 @@ performing git actions you didn't ask for.
      match what actually shipped.
    - **Reference docs** — API/config/usage docs and the spec's own status + acceptance-criteria
      checkboxes.
+   - **Doc shape & examples** — keep the four doc kinds distinct (tutorial · how-to · reference ·
+     explanation); don't blur a reference into a tutorial. **Every code example you add or touch
+     must actually run** — paste-and-execute it, don't trust it by eye.
 
    (Project-specific files to touch live in the project's own context — for this repo, see
    CLAUDE.md → "Release docs sweep".)
