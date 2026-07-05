@@ -17,6 +17,11 @@ Goal: a plan an executor (you or a subagent) can follow without re-deriving cont
    hidden assumptions and missing edge cases, not just the obvious risks. Note where
    you'll need an architecture decision (`/harness-claude:architect`) vs. where the path
    is obvious.
+5. **Flag parallelizable phases.** From the per-phase file lists, mark any phase that writes
+   **3+ independent files with disjoint write-sets and no cross-dependency** as an
+   `/harness-claude:orchestrate` candidate. This is what makes `/implement` surface the parallel
+   fan-out offer instead of silently editing serially — if you don't flag it here, it's usually
+   missed there. Flag only genuine cases; if none qualify, say so.
 
 ## Output
 ```
@@ -25,6 +30,7 @@ Goal: a plan an executor (you or a subagent) can follow without re-deriving cont
   1. <goal> — files — exit check (test/build/behavior)
   2. ...
 ## Risks & dependencies
+## Parallelizable phases (if any) — phases with 3+ independent files → /orchestrate candidates
 ## Where /architect is needed (if any)
 ```
 

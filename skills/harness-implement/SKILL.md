@@ -13,9 +13,11 @@ Thin orchestrator over the Implement skills. Requires an approved plan from
 1. For each plan phase, in order:
    - **`/harness-claude:implement`** — **delegate to the `harness-claude:tdd-guide` agent**: failing test (RED) →
      minimum code (GREEN) → refactor, against the phase's acceptance criteria.
-   - **Parallel-fan-out check:** if the phase spans 3+ independent files with disjoint
-     write-sets and no dependency, *offer* `/harness-claude:orchestrate` to fan the work out
-     (opt-in — propose, don't auto-start a multi-agent run).
+   - **Parallel-fan-out checkpoint (mandatory when it triggers):** before editing a phase
+     serially, if it spans 3+ independent files with disjoint write-sets and no dependency, you
+     **must** surface `/harness-claude:orchestrate` — name the file split and let the user choose.
+     The offer is not optional (that's the only way parallel mode fires); *acting* on it stays
+     opt-in — never auto-start a multi-agent run.
    - Let the format/typecheck/quality hooks run; act on what they surface.
    - If the build/types break and the fix isn't obvious → **`/harness-claude:build-fix`** (delegate to
      the `harness-claude:build-error-resolver` agent), minimal diffs only.
