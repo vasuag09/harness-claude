@@ -163,6 +163,18 @@ Hook state-path bug. `scripts/hooks/_lib.js:stateDir` anchored `.claude/` to the
 state (sessions/traces/staging/eval/runs) lands at repo-root `.claude/` regardless of cwd.
 Non-repo fallback to `~/.claude/harness-claude/` preserved. One function; no surface change.
 
+## Fix (v0.14.3)  ✅
+The parallel fan-out (`/orchestrate`) offer never fired. It was written as an optional aside
+(*"offer"*) in `/implement` and `/harness-implement`, and the trigger (3+ independent files,
+disjoint write-sets) was never actually evaluated — the main loop went straight to serial editing.
+Prompt-only fix, scoped to the multi-agent offer (single-agent delegation left as-is):
+- **`/plan`** now **detects and flags** parallelizable phases as `/orchestrate` candidates and
+  carries the flag into its output, so the opportunity isn't forgotten downstream.
+- **`/implement`** + **`/harness-implement`** turn the soft offer into a **mandatory pre-edit
+  checkpoint**: when the trigger fires the fan-out option *must* be surfaced (with the file split).
+- **Opt-in guardrail preserved:** surfacing the offer is mandatory-when-triggered, but *acting* on
+  it stays opt-in — never a silent multi-agent run. No new skill/agent/dependency.
+
 ## Phase 6 — Computer-use agents  ⬅ next (re-scoped — see below)
 **Scope correction.** The original framing — "browser/GUI automation (Playwright/Chrome) folded
 into `/verify`" — does not earn its keep as written:
