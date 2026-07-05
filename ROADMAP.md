@@ -156,6 +156,13 @@ no agent files imported. Edits to existing prompts; **no new skill/agent/depende
 - **Parked:** self-eval of skill/agent prompts (Tier-2 #1 — strongest structural gap, needs its own
   spec); perf-verification (Tier-2 #3 — irrelevant until a web project is dogfooded).
 
+## Fix (v0.14.2)  ✅
+Hook state-path bug. `scripts/hooks/_lib.js:stateDir` anchored `.claude/` to the hook's incoming
+`cwd`; a hook running from a subdir (e.g. shell had `cd`'d into `skills/`) wrote a stray
+`skills/.claude/`. Now resolves the git **repo root** (`git rev-parse --show-toplevel`) so all
+state (sessions/traces/staging/eval/runs) lands at repo-root `.claude/` regardless of cwd.
+Non-repo fallback to `~/.claude/harness-claude/` preserved. One function; no surface change.
+
 ## Phase 6 — Computer-use agents  ⬅ next (re-scoped — see below)
 **Scope correction.** The original framing — "browser/GUI automation (Playwright/Chrome) folded
 into `/verify`" — does not earn its keep as written:
