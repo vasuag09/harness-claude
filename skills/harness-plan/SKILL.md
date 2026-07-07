@@ -1,6 +1,6 @@
 ---
 name: harness-plan
-description: Orchestrate the entire PLAN phase in one command — spec, research, plan, and (if warranted) architecture. Use at the start of any non-trivial feature/change. Sequences the atomic skills, delegates to subagents, and pauses for your input at each decision gate.
+description: Orchestrate the entire PLAN phase in one command — spec, research, plan, plan-check, and (if warranted) architecture. Use at the start of any non-trivial feature/change. Sequences the atomic skills, delegates to subagents, and pauses for your input at each decision gate.
 ---
 
 # /harness-plan — run the Plan phase
@@ -19,10 +19,16 @@ skills (`/harness-claude:spec`, `/harness-claude:plan`, ...) directly when you o
    Produce the build-vs-reuse decision; fold it into the spec.
 
 3. **`/harness-claude:plan`** — **delegate to the `harness-claude:planner` agent** (pass it the spec + reuse decision +
-   the *objective*, not just a query). Return a phased plan with per-phase exit checks.
-   → **HALT** and show the user the plan for approval before any code.
+   the *objective*, not just a query). Return a phased plan (tasks with write-sets +
+   `depends_on` + the `AC-n` each addresses) with per-task exit checks.
 
-4. **Design gate** — two independent, conditional siblings. A change can need one, both,
+4. **`/harness-claude:plan-check`** — gate the plan against the spec (criteria coverage, scope,
+   parallel-task disjointness) before any code. **Delegate to the `harness-claude:planner` agent in a
+   read-only check pass.** Loop ≤3 revisions with `/plan` on findings.
+   → **HALT** and show the user the checked plan for approval before any code. A standing
+   Critical finding blocks the phase.
+
+5. **Design gate** — two independent, conditional siblings. A change can need one, both,
    or neither; run only what's relevant and **say which you skipped**.
    - **`/harness-claude:architect`** — **only if** the plan flagged a load-bearing *system*
      decision (new subsystem, public interface/data model, cross-cutting change, multi-shape

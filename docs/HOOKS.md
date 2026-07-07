@@ -34,10 +34,10 @@ and dependency-free.
 | `post:edit:design-quality` | PostToolUse | `Edit`/`Write`/`MultiEdit` | Warns when frontend edits drift toward generic template UI | — |
 | `post:edit:strategic-compact` | PostToolUse | `Edit`/`Write`/`MultiEdit` | Suggests `/compact` at logical intervals (~every 50 edits) | — |
 | `post:bash:build-analysis` | PostToolUse | `Bash` | Background, non-blocking analysis after build commands | — |
-| `session-start:load-context` | SessionStart | session start | Surfaces the previous-session pointer; detects package manager | — |
+| `session-start:load-context` | SessionStart | session start | Surfaces the STATE.md spine's `next_skill` (or the previous-session pointer if no STATE.md); detects package manager | — |
 | `session-start:lazy-activate` | SessionStart | session start | Activates `/lazy` generation-reduction — injects the "build the minimum that works" ladder as `additionalContext` (reversible: `LAZY_DISABLE=1` / `LAZY_MODE=off`); see note below | — |
 | `pre-compact:save-state` | PreCompact | before compaction | Saves a state snapshot so context isn't lost | — |
-| `stop:session-summary` | Stop | session end (tree changed) | Persists a session-end snapshot | git |
+| `stop:session-summary` | Stop | session end (tree changed) | Persists a session-end snapshot; refreshes the STATE.md spine's `updated:` timestamp when present | git |
 | `stop:pattern-extraction` | Stop | session end (substantial) | Reads the day's run-trace; stages a candidate note when a tool/skill sequence recurred (run `/extract` to act on it) | trace present |
 
 ---
@@ -129,6 +129,11 @@ Only the memory/session hooks write files, and only inside your project (or `~/.
 when outside a repo):
 
 - `.claude/sessions/<date>.md` — session snapshots (`save-session`, Stop, PreCompact)
+- `.claude/STATE.md` — the position spine; the Stop hook refreshes its `updated:` timestamp
+  (skills own the other fields). Absent until a skill first writes it. Schema:
+  `docs/state-and-artifacts.md`
+- `.claude/planning/<slug>/` — per-feature artifacts (`SPEC.md`, `PLAN.md`, `VERIFICATION.md`)
+  written by the `/spec` · `/plan` · `/verify` skills (not by hooks)
 - `.claude/skills-staging/` — staged candidate patterns + `/extract` proposals (a draft
   `SKILL.md` + `eval.md` per `<slug>/`). Never auto-applied; promotion into `skills/` is
   always your explicit decision. Candidate notes carry only tool/skill names (from the

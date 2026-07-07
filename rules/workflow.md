@@ -6,10 +6,10 @@ delegate to an agent. Move forward only when the current phase's exit criteria a
 ```
 DISCOVER† ─► PLAN ─────────────► IMPLEMENT ─────► VERIFY ─────────────► MAINTAIN
 /discover    /spec  /research          /implement     /review   /test          /refactor-clean
-             /plan                     /build-fix     /security-review         /onboard
+             /plan  /plan-check         /build-fix     /security-review         /onboard
              /architect* /design*                     /design-review*  /verify
                                                        /ship
-        └────────── memory: /save-session · /resume-session (cross-cutting) ──────────┘
+   └─── memory: /save-session · /resume-session · .claude/STATE.md spine (cross-cutting) ───┘
 ```
 
 `†` conditional — the **discovery entry**. `/discover` fires *above* `/spec` only when intent is
@@ -22,9 +22,9 @@ user-facing surfaces. A change can need one, both, or neither; internal/CLI work
 
 | Phase | Done when |
 |-------|-----------|
-| **Plan** | A written spec with acceptance criteria, a reuse decision, a phased task list, and — *when warranted* — an architecture note (`/architect`) and/or a product/UX design brief (`/design`) exist. |
+| **Plan** | A written spec with ID'd acceptance criteria, a reuse decision, a phased task list that **passes `/plan-check`** (no Critical finding), and — *when warranted* — an architecture note (`/architect`) and/or a product/UX design brief (`/design`) exist. |
 | **Implement** | Code matches the plan, builds clean, types/lint pass, tests written first and green. |
-| **Verify** | Code review + security review pass, coverage ≥ 80%, the app/feature observably works, **any user-facing surface passes `/design-review` (craft + a11y/UX floor)**, docs synced. |
+| **Verify** | Code review + security review pass, coverage ≥ 80%, **every acceptance criterion (`AC-n`) has a `pass` verdict backed by evidence in the `/verify` coverage matrix**, the app/feature observably works, **any user-facing surface passes `/design-review` (craft + a11y/UX floor)**, docs synced. |
 | **Maintain** | Dead code/debt removed; the change is documented and reversible. |
 
 ## Tooling defaults
@@ -39,6 +39,32 @@ user-facing surfaces. A change can need one, both, or neither; internal/CLI work
 In the Plan phase, `/research` searches existing libraries, registries, and code
 (GitHub, context7, package registries) for something that already solves ≥80% of the
 problem. Adopt/port proven code over hand-rolling. Document the decision in the spec.
+
+## Durable state & per-phase artifacts (the context-rot substrate)
+
+Two file-system layers keep work resumable and delegation-ready across context resets —
+both **optional and additive**; absent or malformed files degrade to the freeform
+session-file behavior and never block. Full schema: `docs/state-and-artifacts.md`.
+
+- **`.claude/STATE.md` spine** — one small (<100-line) machine-navigable file: frontmatter
+  (`phase`, `status`, `slug`, `next_skill`, `updated`) over Verified/Blocked/Next body
+  sections. It's the *index* above the `.claude/sessions/*.md` narrative, not a replacement.
+  Read it **first** when orienting; each pipeline skill patches it on **phase exit**. The
+  session-start hook surfaces `next_skill`; the stop hook refreshes `updated`.
+- **`.claude/planning/<slug>/` artifacts** — `/spec` writes `SPEC.md` (ID'd `AC-n`
+  criteria), `/plan` writes `PLAN.md` (tasks with write-sets + `depends_on`), `/verify`
+  writes `VERIFICATION.md` (the `AC-n` coverage matrix). A downstream step — or a
+  fresh-context subagent — reads the **file**, not the conversation. Trivial/lazy work
+  skips artifacts and says so in one line.
+
+## Plan-check gate (between Plan and Implement)
+
+`/plan-check` adversarially reviews `PLAN.md` against `SPEC.md` before any code is written —
+criteria coverage, scope creep, and parallel-task write-set disjointness — delegating to the
+`planner` agent read-only and looping ≤3 revisions. Non-blocking except on **Critical** (a
+plan that can't satisfy a criterion, or parallel tasks colliding on a file). It is the
+plan-phase counterpart to `/review`. Surfaced-mandatory, act-opt-in: `/plan` recommends it;
+you run it.
 
 ## Discovery entry (opt-in, conditional)
 

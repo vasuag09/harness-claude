@@ -13,19 +13,36 @@ criterion with evidence. A clean first pass is suspicious, not reassuring — lo
 you pass it; first attempts usually have a rough edge you haven't found yet.
 
 ## Do this
-1. Launch the app/feature the way a user would (dev server in tmux, CLI invocation,
+1. Load the criteria from `.claude/planning/<slug>/SPEC.md` (and `PLAN.md` for what each
+   task claimed to cover), if present — verify against the recorded `AC-n`, not memory.
+2. Launch the app/feature the way a user would (dev server in tmux, CLI invocation,
    the affected screen/endpoint).
-2. Exercise each **acceptance criterion** against the running system. For web, drive
+3. Exercise each **acceptance criterion** against the running system. For web, drive
    the browser (Playwright/Chrome) and capture a screenshot of the working state.
-3. Check the unhappy paths the spec named: invalid input, empty/error states, edge
+4. Check the unhappy paths the spec named: invalid input, empty/error states, edge
    cases. Confirm errors are handled and messages are sane.
-4. Note anything observed that tests missed → add a regression test (back to `/harness-claude:test`).
+5. Note anything observed that tests missed → add a regression test (back to `/harness-claude:test`).
 
-## Output
-A short evidence note: what you ran, what you observed per criterion (pass/fail),
-screenshots/log snippets for the key states.
+## Output — coverage matrix
+Build a matrix mapping **every `AC-n`** to the evidence and a verdict, and write it to
+`.claude/planning/<slug>/VERIFICATION.md` (present it in the reply too; for trivial work,
+the reply is enough):
+
+```
+## Verification: <title>
+| Criterion | Evidence (what you ran / observed) | Verdict |
+|-----------|------------------------------------|---------|
+| AC-1      | <command / screenshot / log>       | pass    |
+| AC-2      | (could not exercise)               | FAIL    |
+```
+
+A criterion you could not actually exercise is **FAIL**, not blank — never pass on
+assumption.
+
+## State
+Patch `.claude/STATE.md`: `phase: verify`, `status: done` (or `blocked`),
+`next_skill: /ship`.
 
 ## Exit criterion
-Every acceptance criterion **observably works and is backed by evidence** in the running app.
-Any criterion you could not actually exercise **fails by default** — never pass on assumption.
-Then `/harness-claude:ship`.
+**Every `AC-n` has a `pass` verdict backed by evidence.** Any unaddressed or failing
+criterion blocks the exit — the matrix names which `AC-n` and why. Then `/harness-claude:ship`.
