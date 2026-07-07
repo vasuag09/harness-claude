@@ -8,7 +8,9 @@ description: Execute a plan via test-driven development — write tests first, t
 Goal: turn the plan into working, tested, clean code — one phase at a time.
 
 ## Do this
-1. Take the plan's phases in order. For each phase:
+1. Take the plan's tasks in order — read `.claude/planning/<slug>/PLAN.md` if present (slug
+   in `.claude/STATE.md`) so a fresh-context executor works from the file, not the
+   conversation. For each task/phase:
    - **Delegate to `harness-claude:tdd-guide`** (or run TDD inline): write a failing test against an
      acceptance criterion (RED) → minimum code to pass (GREEN) → refactor.
    - Keep files modular and lean (<800 lines), immutable patterns, inputs validated.
@@ -30,6 +32,10 @@ Goal: turn the plan into working, tested, clean code — one phase at a time.
 ## Token discipline
 Delegate search/exploration and isolated edits to cheaper models; keep the orchestrator
 focused on integration. Compact at phase boundaries, not mid-phase.
+
+## State
+On completion, patch `.claude/STATE.md`: `phase: implement`, `status: done`,
+`next_skill: /review`.
 
 ## Exit criterion
 All phases complete, tests written-first and green, build/types/lint clean. Then

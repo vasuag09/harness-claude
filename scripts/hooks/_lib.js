@@ -90,6 +90,40 @@ function todayFile(cwd) {
   return path.join(stateDir(cwd, 'sessions'), `${d}.md`);
 }
 
+// Path to the STATE.md spine — repo-root .claude/STATE.md (or the home fallback).
+function stateFile(cwd) {
+  // stateDir already mkdir's .claude/sessions; STATE.md sits one level up in .claude/.
+  return path.join(path.dirname(stateDir(cwd, 'sessions')), 'STATE.md');
+}
+
+// Parse the leading `--- ... ---` YAML frontmatter of a markdown string into a flat
+// { key: value } map. Deliberately minimal (no YAML dep): top-level `key: value` lines
+// only, quotes stripped, `null`/empty → undefined. Never throws; returns {} on anything
+// unexpected so a malformed STATE.md degrades gracefully instead of breaking a hook.
+function parseFrontmatter(text) {
+  try {
+    const m = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text || '');
+    if (!m) return {};
+    const out = {};
+    for (const line of m[1].split(/\r?\n/)) {
+      const kv = /^([A-Za-z0-9_]+):\s*(.*)$/.exec(line);
+      if (!kv) continue;
+      let v = kv[2].trim().replace(/^["']|["']$/g, '');
+      if (v === '' || v === 'null' || v === '~') continue;
+      out[kv[1]] = v;
+    }
+    return out;
+  } catch { return {}; }
+}
+
+// Read + parse STATE.md frontmatter, or {} if absent/unreadable.
+function readState(cwd) {
+  try {
+    const p = stateFile(cwd);
+    return fileExists(p) ? parseFrontmatter(fs.readFileSync(p, 'utf8')) : {};
+  } catch { return {}; }
+}
+
 function appendFile(p, text) {
   try { fs.appendFileSync(p, text); return true; } catch { return false; }
 }
@@ -109,4 +143,5 @@ function block(msg) {
 module.exports = {
   readInput, editedFile, cwdOf, sh, has, toolCmd, fileExists,
   stateDir, todayFile, appendFile, note, block, path, fs, os,
+  stateFile, parseFrontmatter, readState,
 };

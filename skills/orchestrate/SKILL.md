@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description: Decompose a multi-file task, fan out to parallel workers, and reconcile their results — with a one-writer-per-file guarantee. The third orchestration mode (parallel fan-out) alongside sequential and iterative-retrieval. Rides the platform Workflow tool as the engine; the skill is the lead — it splits the work, assigns disjoint file-ownership, dispatches workers under explicit contracts, and merges their summaries. Opt-in; not wired into the default pipeline. Use when a task spans 3+ independent files with no data dependency between them.
+description: Decompose a multi-file task, fan out to parallel workers in dependency-ordered waves, and reconcile their results — with a one-writer-per-file guarantee. The third orchestration mode (parallel fan-out) alongside sequential and iterative-retrieval. Rides the platform Workflow tool as the engine; the skill is the lead — it splits the work, groups tasks into waves by their declared dependencies, assigns disjoint file-ownership within each wave, dispatches workers under explicit contracts, and merges their summaries. Opt-in; not wired into the default pipeline. Use when a task spans 3+ files that can be grouped into waves of independent, disjoint-write-set work.
 ---
 
 # /orchestrate — split the work, fan out, reconcile
@@ -16,31 +16,41 @@ under explicit contracts, and reconciles their structured summaries into one res
 > arm it in the objective. **Token discipline:** workers return *summaries, not raw dumps*
 > (per `rules/agents.md`).
 
-This is the parallel-fan-out mode from `rules/agents.md`. Reach for it only when the work is
-genuinely splittable: **3+ files, disjoint write-sets, no dependency between subtasks.** If
-subtasks must read each other's output, that's sequential or iterative — not this.
+This is the parallel-fan-out mode from `rules/agents.md`. Reach for it when the work is
+splittable into **3+ tasks** whose *concurrent* members have disjoint write-sets. Tasks
+that depend on each other's output aren't excluded — they run in **later waves**, not the
+same batch. Only if the whole task is one unsplittable sequence is this the wrong mode.
 
 ## How it works
 ```
-decompose  →  assign owners  →  verify disjointness  →  fan out (Workflow)  →  reconcile
+decompose  →  group into waves (by depends_on)  →  per wave: verify disjointness → fan out (Workflow)  →  reconcile
 ```
-1. **Decompose** the task into subtasks, each scoped to a set of files it will *write*.
+1. **Decompose** the task into subtasks (`T1`, `T2`, …), each scoped to a set of files it
+   will *write* and a `depends_on` list of prior task IDs. (A `PLAN.md` from `/plan`
+   already carries this format — see `docs/state-and-artifacts.md`.)
 2. **Assign owners** — every writable file belongs to exactly one subtask.
-3. **Verify disjointness** — across any workers that run concurrently, the write-sets must be
-   pairwise disjoint. If two would write the same file, **refuse to fan out** and name the file.
-4. **Fan out** the independent subtasks via the Workflow tool; sequence the dependent ones.
+3. **Group into waves** — topologically sort by `depends_on`: tasks with `depends_on: []`
+   form wave 1; a task joins the wave *after* the latest wave of its dependencies. Waves
+   run **sequentially**; tasks **within** a wave run in parallel. A fully-independent task
+   set collapses to a **single wave** (identical to the pre-wave behavior — backward
+   compatible). A dependency **cycle** is an error: **refuse to run** and name the cycle.
+4. **Per wave: verify disjointness, then fan out** — before each wave's batch, check that
+   its tasks' write-sets are pairwise disjoint (refuse and name the file if not); dispatch
+   that wave via the Workflow tool; await it before starting the next wave.
 5. **Reconcile** the workers' structured summaries into one result; surface conflicts/failures.
 
 ## Do this
 1. **Write the decomposition plan** before dispatching. For each subtask: a one-line goal, its
-   **owned files** (the only files it may write), its **read-only files**, and its tool scope
-   (Read always; Write/Edit/Bash only over owned files). Brief each worker from
-   `worker-contract.md` — one filled instance per subtask.
-2. **Run the disjointness check.** List the union of all write-sets for the workers in a given
-   parallel batch. If any file appears in two sets, stop and report the conflict; either
-   re-partition so owners are disjoint, or sequence the conflicting workers into different
-   batches. Only fan out once write-sets are pairwise disjoint.
-3. **Dispatch via the Workflow tool.** Independent subtasks → one `parallel()` batch (a barrier:
+   **owned files** (the only files it may write), its **read-only files**, its `depends_on`
+   task IDs, and its tool scope (Read always; Write/Edit/Bash only over owned files). Brief each
+   worker from `worker-contract.md` — one filled instance per subtask.
+2. **Group into waves and check each.** Topologically sort the subtasks by `depends_on` into
+   waves (wave 1 = no deps; a cycle → stop and name it). Then, **for the wave you're about to
+   dispatch**, list the union of its workers' write-sets: if any file appears in two sets, stop
+   and report the conflict — re-partition so owners are disjoint, or push a colliding worker to a
+   later wave. Only fan out a wave once its write-sets are pairwise disjoint.
+3. **Dispatch wave by wave via the Workflow tool**, awaiting each wave before starting the next.
+   A wave's independent subtasks → one `parallel()` batch (a barrier:
    it awaits all workers and returns their results together). Use `pipeline()` only when items
    flow independently through stages — it has **no barrier** between stages (each item proceeds
    as it's ready), so don't expect it to synchronize all items before the next stage. Each worker
@@ -96,6 +106,7 @@ failures — not a raw dump). A worker that cannot finish without writing outsid
   this decomposes one arbitrary task across parallel writers.
 
 ## Exit criterion
-A decomposition was written, the disjointness check passed (or refused, naming the conflict),
-independent subtasks ran in parallel, and every worker's summary was reconciled into one result
-with failures surfaced — never a fan-out left with a silent collision or a dropped worker.
+A decomposition was written, tasks were grouped into dependency-ordered waves (or a cycle was
+refused, named), each wave's disjointness check passed (or refused, naming the conflict), waves
+ran sequentially with their tasks in parallel, and every worker's summary was reconciled into one
+result with failures surfaced — never a fan-out left with a silent collision or a dropped worker.

@@ -175,6 +175,35 @@ Prompt-only fix, scoped to the multi-agent offer (single-agent delegation left a
 - **Opt-in guardrail preserved:** surfacing the offer is mandatory-when-triggered, but *acting* on
   it stays opt-in — never a silent multi-agent run. No new skill/agent/dependency.
 
+## Durable-state structural bones (v0.15.0)  ✅
+Five structural additions that make the pipeline resumable and delegation-ready — kept prompt-only
++ light hooks, no engine. The unifying idea: durable file-system state is what lets a fresh-context
+subagent work from a file instead of an accumulating conversation (the harness's answer to context
+rot). **Also closes the parked Tier-2 #1** (self-eval of plans) as `/plan-check`.
+- ✅ **STATE.md spine** — `.claude/STATE.md`: a small (<100-line) machine-navigable position file
+  (frontmatter `phase`/`status`/`slug`/`next_skill`/`updated` over Verified/Blocked/Next). Read
+  first on orient; patched on phase exit. The *index* above the freeform session narrative, not a
+  replacement. `session-start` surfaces `next_skill`; the Stop hook refreshes `updated`;
+  `/resume-session` reads it first and flags drift vs. the narrative.
+- ✅ **Per-phase disk artifacts** — `.claude/planning/<slug>/`: `/spec`→`SPEC.md`, `/plan`→`PLAN.md`,
+  `/verify`→`VERIFICATION.md`. Downstream steps (and subagents) read the file, not the chat. Trivial
+  work skips them (lazy reflex).
+- ✅ **`/plan-check` gate** — new 34th skill: adversarially reviews `PLAN.md` vs. `SPEC.md` (criteria
+  coverage · scope creep · parallel-task write-set disjointness), delegates to the `planner` agent
+  read-only, loops ≤3, non-blocking except Critical. Wired between `/plan` and `/implement` (incl.
+  `/harness-plan`). Surfaced-mandatory, act-opt-in.
+- ✅ **Dependency waves in `/orchestrate`** — tasks declare `depends_on`; the lead topologically groups
+  them into waves (parallel within, sequential across), checks write-set disjointness per wave, and
+  refuses a dependency cycle. Fully-independent sets collapse to one wave — backward compatible.
+- ✅ **Coverage-matrix `/verify`** — acceptance criteria carry stable `AC-n` IDs (`/spec`); `/verify`
+  emits an `AC-n` × evidence × pass/fail matrix and blocks the exit on any unaddressed/failing
+  criterion.
+- **Adds (v0.15.0):** `skills/plan-check/SKILL.md` (33→34 skills) + `docs/state-and-artifacts.md`;
+  edits to `spec`/`plan`/`implement`/`verify`/`orchestrate`/`resume-session`/`harness-plan` skills and
+  the `session-start`/`stop-session-summary` hooks + `_lib.js`. **No new agent, no new dependency, no
+  new MCP server, no new runtime.** All additive — absent STATE/artifacts degrade to the old
+  session-file behavior; the git boundary holds.
+
 ## Phase 6 — Computer-use agents  ⬅ next (re-scoped — see below)
 **Scope correction.** The original framing — "browser/GUI automation (Playwright/Chrome) folded
 into `/verify`" — does not earn its keep as written:

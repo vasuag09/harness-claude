@@ -81,7 +81,7 @@ It lives in its own repo and installs as a Claude Code **plugin/marketplace**, s
 | Layer | Where | Count | Role |
 |-------|-------|-------|------|
 | Rules | `rules/` | 7 | always-on guidance (cited by skills; imported by `CLAUDE.md`) |
-| Skills | `skills/<name>/SKILL.md` | 33 | 18 atomic `/discover … /ship` drivers (incl. the `/discover` vague-intent discovery entry above `/spec`, and the `/design` + `/design-review` design altitude) + 5 phase orchestrators + 4 opt-in eval (`/eval` `/extract` `/benchmark` `/health`) + `/lazy` (generation reduction) + `/operate` (guarded long-running runs) + `/orchestrate` (multi-agent parallel fan-out) + `/fix` (bug-fix fast lane) + `/deploy` + `/observe` (release & feedback loop) |
+| Skills | `skills/<name>/SKILL.md` | 34 | 19 atomic `/discover … /ship` drivers (incl. the `/discover` vague-intent discovery entry above `/spec`, the `/plan-check` adversarial plan gate between `/plan` and `/implement`, and the `/design` + `/design-review` design altitude) + 5 phase orchestrators + 4 opt-in eval (`/eval` `/extract` `/benchmark` `/health`) + `/lazy` (generation reduction) + `/operate` (guarded long-running runs) + `/orchestrate` (multi-agent parallel fan-out) + `/fix` (bug-fix fast lane) + `/deploy` + `/observe` (release & feedback loop) |
 | Agents | `agents/*.md` | 8 | scoped subagents the skills delegate to |
 | Hooks | `hooks/hooks.json` + `scripts/hooks/` | — | tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence, structural orientation, generation reduction |
 | MCPs | `.mcp.json` | 3 | memory · sequential-thinking · magic (load only when enabled) |
@@ -187,7 +187,7 @@ to built-in tools and say so.
 | Item | Status | Fallback when absent |
 |------|--------|----------------------|
 | 8 agents (`harness-claude:*`) | **Bundled** | — (always present) |
-| 33 skills (`/harness-claude:*`) | **Bundled** | — (always present) |
+| 34 skills (`/harness-claude:*`) | **Bundled** | — (always present) |
 | design rubrics (`skills/design/references/`) | **Bundled** — self-contained, no external plugin | — (always present) |
 | 3 MCPs (memory · sequential-thinking · magic) | **Bundled**, load only when enabled | harness works without them |
 | `mgrep` | Optional companion | `Grep` / `Glob` |

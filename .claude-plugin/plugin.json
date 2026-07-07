@@ -1,7 +1,7 @@
 {
   "name": "harness-claude",
-  "version": "0.14.3",
-  "description": "Lean full-SDLC Claude Code harness — Discover, Plan, Implement, Verify, Maintain — with a vague-intent discovery entry above /spec, subagent orchestration, memory persistence, a product/UX + system design altitude, benchmark-gated cost/token optimization, guarded long-running agent runs, multi-agent parallel fan-out, a bug-fix fast lane, and a release & feedback loop (deploy + observe) that closes the pipeline.",
+  "version": "0.15.0",
+  "description": "Lean full-SDLC Claude Code harness — Discover, Plan, Implement, Verify, Maintain — with a vague-intent discovery entry above /spec, a durable STATE spine + per-phase disk artifacts, an adversarial /plan-check gate, dependency-wave parallel orchestration, coverage-matrix verify, subagent orchestration, memory persistence, a product/UX + system design altitude, benchmark-gated cost/token optimization, guarded long-running agent runs, a bug-fix fast lane, and a release & feedback loop (deploy + observe) that closes the pipeline.",
   "author": {
     "name": "Vasu Agrawal"
   },

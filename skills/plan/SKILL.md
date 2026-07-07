@@ -8,10 +8,14 @@ description: Produce a phased, risk-assessed implementation plan from a spec. Us
 Goal: a plan an executor (you or a subagent) can follow without re-deriving context.
 
 ## Do this
-1. For non-trivial work, **delegate to the `harness-claude:planner` agent**, passing it the spec,
+1. For non-trivial work, **delegate to the `harness-claude:planner` agent**, passing it the spec
+   (read `.claude/planning/<slug>/SPEC.md` if present — the slug is in `.claude/STATE.md`),
    the reuse decision, and the objective/purpose (not just a one-line query).
 2. For small/linear work, plan inline using the same shape.
-3. Break work into **phases**: each small, independently verifiable, with an exit check.
+3. Break work into **phases/tasks**: each small, independently verifiable, with an exit check.
+   Give each task an ID (`T1`, `T2`, …), its **write-set** (files it will create/edit), a
+   `depends_on` list of prior task IDs, and the `AC-n` criteria it **addresses** — the
+   format `/orchestrate` and `/verify` consume (schema: `docs/state-and-artifacts.md`).
 4. Surface risks, dependencies, and ordering explicitly. **Red-team the plan before
    handing it off** — assume it already failed and ask why; attack your own draft for
    hidden assumptions and missing edge cases, not just the obvious risks. Note where
@@ -24,19 +28,32 @@ Goal: a plan an executor (you or a subagent) can follow without re-deriving cont
    missed there. Flag only genuine cases; if none qualify, say so.
 
 ## Output
+For non-trivial work, **write `.claude/planning/<slug>/PLAN.md`** (present a summary in the
+reply too); for trivial work, the plan in the reply is enough (say so). Format:
+
 ```
 ## Plan: <title>
-## Phases
-  1. <goal> — files — exit check (test/build/behavior)
-  2. ...
+## Tasks
+### Task T1: <goal>
+- files: <write-set>
+- depends_on: []
+- addresses: AC-1, AC-2
+- exit check: <test/build/behavior>
+### Task T2: ...
 ## Risks & dependencies
-## Parallelizable phases (if any) — phases with 3+ independent files → /orchestrate candidates
+## Parallelizable phases (if any) — tasks with 3+ independent files, disjoint write-sets → /orchestrate candidates
 ## Where /architect is needed (if any)
 ```
 
+## State
+When you wrote a `PLAN.md`, patch `.claude/STATE.md`: `phase: plan`, `status: done`,
+`next_skill: /plan-check`.
+
 ## Orchestration note
-This is the canonical **sequential-phase** flow (see rules/agents.md). Store the plan
-in the session file for multi-session work. Compact context before heavy implementation.
+This is the canonical **sequential-phase** flow (see rules/agents.md). Compact context
+before heavy implementation.
 
 ## Exit criterion
-Every phase has a concrete exit check. Then `/harness-claude:architect` (if flagged) or `/harness-claude:implement`.
+Every task has a write-set, `depends_on`, the `AC-n` it addresses, and a concrete exit
+check. Then `/harness-claude:plan-check` (gate the plan before building) — or
+`/harness-claude:architect` first if flagged.

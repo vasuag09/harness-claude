@@ -10,11 +10,11 @@ other projects), see README → "Make the rules global (opt-in)".
 ## The pipeline
 
 ```
-DISCOVER† ─► PLAN ───────────► IMPLEMENT ─────► VERIFY ─────────────────► MAINTAIN
-/discover    /spec  /research        /implement     /review  /security-review    /refactor-clean
-             /plan  /architect* /design*  /build-fix  /design-review*  /test       /onboard
-                                                      /verify  /ship
-                  memory: /save-session · /resume-session (cross-cutting)
+DISCOVER† ─► PLAN ────────────────► IMPLEMENT ─────► VERIFY ─────────────────► MAINTAIN
+/discover    /spec  /research             /implement     /review  /security-review    /refactor-clean
+             /plan  /plan-check           /build-fix  /design-review*  /test           /onboard
+             /architect* /design*                     /verify  /ship
+                  memory: /save-session · /resume-session · STATE.md spine (cross-cutting)
 ```
 
 `†` = the conditional **discovery entry**: `/discover` fires *above* `/spec` only when intent is vague
@@ -34,7 +34,7 @@ atomic skills, delegate to subagents, and halt for your input at each gate):
 ## What's here
 
 - **rules/** — always-on guidance (engineering, security, testing, typescript, python, workflow, agents)
-- **skills/** — the 18 pipeline drivers you invoke as `/discover`, `/spec`, `/plan`, `/review`, ...
+- **skills/** — the 19 pipeline drivers you invoke as `/discover`, `/spec`, `/plan`, `/plan-check`, `/review`, ...
   (incl. the **discovery entry**: `/discover` is the step *above* `/spec` — when intent is vague it
   turns it into a framed problem + one chosen direction, then hands off to `/spec`; conditional/opt-in,
   an already-clear request skips it; and the **design altitude**: `/design` produces a product/UX/UI
@@ -69,8 +69,13 @@ atomic skills, delegate to subagents, and halt for your input at each gate):
 - **Token optimization:** delegate to the cheapest sufficient model; subagents return
   summaries, not raw dumps. Benchmarking measures value; it is not the runtime strategy.
 - **Orchestration:** sequential phases by default; iterative retrieval (≤3 cycles) when
-  a subagent's return is insufficient; parallel fan-out across independent files via
+  a subagent's return is insufficient; parallel fan-out in **dependency-ordered waves** via
   `/orchestrate` (opt-in). See rules/agents.md.
+- **Durable state:** a machine-navigable `.claude/STATE.md` spine (phase · status ·
+  next_skill) sits above the freeform session narrative; non-trivial features write
+  per-phase artifacts to `.claude/planning/<slug>/` (`SPEC.md` → `PLAN.md` → `VERIFICATION.md`)
+  so a fresh-context subagent reads a file, not the conversation. Schema:
+  `docs/state-and-artifacts.md`. Optional — trivial work skips it (lazy reflex).
 - **Modular & lean:** files <800 lines, immutable patterns, validated inputs.
 - **Search with mgrep, not grep.** Run long commands in tmux. Use context7 for live docs.
 - **Git boundary:** never commit/push/branch unless the user explicitly asks.
