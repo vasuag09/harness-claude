@@ -29,6 +29,18 @@ and one runnable check behind non-trivial logic) is non-negotiable. Measured mar
 this file's standing YAGNI: **−35% generated output / −23% LOC at held accuracy** on an
 over-build-prone task; dollar impact scales with how output-heavy the work is. See `skills/lazy/SKILL.md`.
 
+## Surface assumptions & scope discipline
+
+Before non-trivial work, **state the assumptions you're filling in** (about requirements,
+architecture, scope) in one short block and invite correction — silently guessing at an
+ambiguous spec is the most expensive failure mode. When you hit a genuine contradiction
+(spec vs code, two sources disagreeing), stop and name it; don't pick an interpretation
+and hope.
+
+Touch only what the task names. Don't remove comments you don't understand, refactor
+adjacent code as a side effect, delete "seemingly unused" code without approval, or add
+unrequested features. Surgical diffs; cleanup belongs to `/refactor-clean`.
+
 ## Immutability (CRITICAL)
 
 Create new values; never mutate shared ones in place.

@@ -38,6 +38,22 @@ Goal: turn the plan into working, tested, clean code — one phase at a time.
 Delegate search/exploration and isolated edits to cheaper models; keep the orchestrator
 focused on integration. Compact at phase boundaries, not mid-phase.
 
+## Common rationalizations (don't accept these from yourself)
+
+| Excuse | Reality |
+|--------|---------|
+| "I'll write the tests after the code works" | Tests written after mirror the implementation, not the criterion. RED first, or it isn't TDD. |
+| "This phase is too small to test" | Small phases grow. The test is the phase's exit check — without it, "done" is an opinion. |
+| "The plan is close enough; I'll adjust as I go" | Silent divergence is how scope creeps. Stop, patch the plan, resume. |
+| "Branching is overhead for this" | A branch is one command and fully reversible; un-picking mixed work on the default branch is neither. |
+| "Fan-out doesn't apply here" (without counting) | Count the write-set first. Skipping the count is how the offer never fires. |
+
+## Red flags — stop and re-check
+- Code exists for which no test was ever RED.
+- You're editing a file the plan never named.
+- A hook flagged something and you deferred it "until the end".
+- You're three phases in with no green checkpoint between them.
+
 ## State
 On completion, patch `.claude/STATE.md`: `phase: implement`, `status: done`,
 `next_skill: /review`.

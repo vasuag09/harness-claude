@@ -1,18 +1,6 @@
 # harness-claude
 
-**A lean, full-SDLC harness for Claude Code that benchmark-gates its own features — and kills the ones that don't earn their keep.**
-
-This is the first time I'm sharing this publicly. I built it privately, iterating toward
-v0.8.0 (an internal version count, not a prior release history), to turn Claude Code from
-a powerful-but-undisciplined chat loop into a real **Plan → Implement → Verify → Maintain**
-pipeline — scoped subagents, test-first gates, cross-session memory, reversible hooks.
-
-The part I'm most proud of isn't a feature — it's the discipline behind one of them. Every
-cost optimization I tried had to beat a bare baseline on cost-per-successful-task, or I
-killed it and wrote down why. I ran 4 experiments. I shipped 2. [See what I killed and why ↓](#what-i-killed-and-why)
-
-Stack focus: **TypeScript/JS (React, Next, Vercel)** and **Python**. MIT-licensed,
-plugin-installable, ~0-dependency hooks (plain Node).
+**Turn Claude Code into a disciplined engineering system — a full Plan → Implement → Verify → Maintain pipeline whose gates actually fire, and whose features had to beat a measured baseline or get killed.**
 
 ```
 PLAN ─────────────► IMPLEMENT ─────► VERIFY ─────────────► MAINTAIN
@@ -20,33 +8,64 @@ PLAN ─────────────► IMPLEMENT ─────► VER
 /plan  /architect         /build-fix     /test    /verify  /ship      /onboard
 ```
 
+## Quick start
+
 ```bash
 claude plugin marketplace add vasuag09/harness-claude
 /plugin            # find "harness-claude", enable it
 /harness           # run the full pipeline on a real task
 ```
 
-Built to evolve toward eval loops, retrieval, long-running agents, multi-agent
-orchestration, and computer-use (see [ROADMAP.md](./ROADMAP.md)).
+Or start with a single gate: `/spec` a feature, `/fix` a bug, `/review` a diff.
+
+**Not on Claude Code?** The 34 skills are standard `SKILL.md` files (YAML `name` +
+`description` frontmatter) — install them into Cursor, Codex, Copilot, Gemini CLI, and
+70+ other agents with the open [skills CLI](https://github.com/vercel-labs/skills):
+
+```bash
+npx skills add vasuag09/harness-claude          # install skills into your agent
+npx skills add vasuag09/harness-claude --list   # browse first
+```
+
+That gets you the **portable tier** — the workflow skills. The **enforcement tier**
+(runtime hooks, scoped subagents, orchestrators, durable state) is Claude Code–native.
+
+## Why this instead of a prompt pack
+
+Most agent-workflow repos are markdown the agent *reads*. This is a system that *runs*:
+
+- **Gates that fire** — format/typecheck/quality/design hooks run on every edit, and a
+  routing hook re-anchors every prompt to the pipeline. Prompts suggest; hooks enforce.
+- **Scoped subagents with model routing** — 8 agents on cheapest-sufficient models, three
+  orchestration modes, parallel fan-out with a one-writer-per-file guarantee.
+- **Work that survives sessions** — a durable `STATE.md` spine + per-phase planning
+  artifacts, so a fresh context resumes from files, not chat scrollback.
+- **Measured, not vibes** — every cost optimization had to beat a baseline on
+  cost-per-successful-task at held pass^k, or die. Four experiments; two killed.
+  [The receipts →](./docs/BENCHMARKS.md)
+- **Past the repo edge** — `/deploy` (arm-to-fire) and `/observe` (prod signal → repro →
+  `/fix`) close the pipeline into a loop.
+
+Evaluating against **agent-skills**, **Superpowers**, or **Matt Pocock's skills**?
+[Honest comparison →](./docs/COMPARISON.md)
+
+Stack focus: **TypeScript/JS (React, Next, Vercel)** and **Python**. MIT-licensed,
+plugin-installable, ~0-dependency hooks (plain Node).
 
 ---
 
-## What I killed (and why)
+## What got killed (and why that matters)
 
-Every optimization here had to clear one gate: **does it beat a bare baseline on
-cost-per-successful-task, at held consistency (pass^k)?** Not "does it work" — "is it
-worth it." Two of four didn't clear it.
+I built this privately to v0.8.0 before sharing it. The part I'm most proud of isn't a
+feature — it's the gate behind them: **beat a bare baseline on cost-per-successful-task
+at held consistency (pass^k), or get killed and documented.** Two of four didn't clear it —
+an input-compression proxy (broke cache economics) and a popular ~51k★ code-graph MCP
+(fixed context tax exceeded the whole task cost). What shipped: `/lazy` generation
+reduction (**−35% output tokens, −23% LOC at held accuracy**, honest caveat: ~−3% dollars
+on cache-dominated tasks) and a zero-tax structural-orientation hook.
 
-| # | Optimization | Result | Why |
-|---|---|---|---|
-| 1 | Input-compression proxy (wire-level, compresses what's fed to the model) | 🔴 **Killed** | Broke Claude Code's cache economics — compressing the cached prefix invalidated the cache that made it cheap, so it cost *more* |
-| 2 | A code-graph MCP (a popular ~51k★ structural-index server) | 🔴 **Killed** | Its fixed per-session context tax was bigger than the entire task cost on a normal-sized repo (might win on very large repos — out of scope here) |
-| 3 | Generation reduction — the `/lazy` "build the minimum that actually works" reflex | 🟢 **Shipped, always-on** | **−35% generated output tokens, −23% LOC, at held accuracy** (k=3, Opus/Sonnet, measured against the harness's own existing YAGNI rules) |
-| 4 | Structural orientation hook (lightweight local code-index) | 🟢 **Shipped, always-on, with a caveat** | A large-repo bet, not yet benchmarked at scale — does no harm on small repos, but isn't a proven win there either |
-
-One honest caveat on #3: the **dollar** savings on a small task were only ~−3% (within
-noise) — cost here is dominated by cached input, and the output cut only moves real
-dollars on output-heavy work. The win is real, just not a headline multiplier.
+Full method, raw trial numbers, and the retained kill apparatus:
+**[docs/BENCHMARKS.md](./docs/BENCHMARKS.md)**.
 
 ---
 
@@ -58,6 +77,8 @@ dollars on output-heavy work. The win is real, just not a headline multiplier.
 | [docs/SKILLS.md](./docs/SKILLS.md) | Every command + agent, what each does, what it delegates to |
 | [docs/HOOKS.md](./docs/HOOKS.md) | Exactly what runs on your machine, and how to disable any hook |
 | [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) | Hooks not firing, slow `tsc`, MCP, git boundary — fixes |
+| [docs/COMPARISON.md](./docs/COMPARISON.md) | How this differs from agent-skills, Superpowers, Matt Pocock's skills |
+| [docs/BENCHMARKS.md](./docs/BENCHMARKS.md) | The benchmark gate: what shipped, what got killed, raw numbers |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | Adding skills/hooks, portability rules, PR checklist |
 | [ROADMAP.md](./ROADMAP.md) | Where this is going (eval loops → retrieval → multi-agent → computer-use) |
 
