@@ -70,6 +70,21 @@ reproduce (RED test)  →  root cause  →  minimal fix-plan  →  hand off to /
 - The skill *is* the lead — there is no separate fix agent (the lead logic lives here, the same way
   `/harness-claude:orchestrate` and `/harness-claude:operate` own theirs).
 
+## Common rationalizations (don't accept these from yourself)
+
+| Excuse | Reality |
+|--------|---------|
+| "The fix is obvious — a repro test is overhead" | An "obvious" fix without a RED repro is a guess with confidence. The test is what proves you fixed *this* bug. |
+| "I can't easily reproduce it, so I'll just patch the likely cause" | Then say so and record manual repro steps — the fallback is explicit, never silent. |
+| "While I'm in this file, I'll clean up..." | That's `/harness-claude:refactor-clean`'s job. Mixed fixes make the regression bisect-proof. |
+| "The symptom is gone, ship it" | A disappeared symptom with an unnamed cause reappears wearing a different stack trace. |
+
+## Red flags — stop and re-check
+- You wrote fix code before the repro test existed.
+- The repro test passes before the fix lands (it's not reproducing the bug).
+- The fix-plan touches more files than the root-cause statement explains.
+- The bug is in security-sensitive code and the fix-plan doesn't flag `/harness-claude:security-review`.
+
 ## Exit criterion
 A failing test reproduced the bug (or manual repro steps were recorded with the reason automation
 wasn't possible), the root cause was named, a minimal fix-plan was written, and the fix was handed

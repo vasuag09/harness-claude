@@ -227,6 +227,25 @@ commit/push), and pipeline discipline decayed after the first run (the routing l
   `_lib.js`/`session-start.js`/`hooks.json`. Also repaired 9 pre-existing bare skill refs that had
   broken `check-reference-integrity.sh` since v0.15.0. **No new agent, no new dependency.**
 
+## Portability & positioning (v0.17.0)  ✅
+A field comparison against the trending skill packs (agent-skills, Superpowers, Matt Pocock's
+skills) found the gap is mostly distribution, amplified by four product gaps. Closed the product
+side; distribution material drafted (posting is the user's call):
+- ✅ **Anti-rationalization guards** (concept adopted, wording our own) — "Common
+  rationalizations" (excuse → rebuttal) + "Red flags" sections on the four highest skip-risk
+  gate skills (`implement`, `review`, `verify`, `fix`); a "Surface assumptions & scope
+  discipline" block added to `rules/engineering.md`.
+- ✅ **Portability tier named** — all 34 SKILL.md files verified skills-CLI compatible
+  (`name`+`description` frontmatter); README documents `npx skills add` install for 70+ other
+  agents, with the honest split: portable workflow tier vs Claude Code–native enforcement tier.
+- ✅ **30-second README** — benefit-first headline, quick start + cross-agent install in the
+  first screen, "why this instead of a prompt pack" bullets; the kill-list narrative condensed
+  and moved below the fold.
+- ✅ **Packaged assets** — `docs/COMPARISON.md` (honest shape-map vs the three packs) and
+  `docs/BENCHMARKS.md` (the 4-experiment kill-list with method, raw numbers, and caveats).
+- **Adds (v0.17.0):** `docs/COMPARISON.md`, `docs/BENCHMARKS.md`; edits to 4 gate skills,
+  `rules/engineering.md`, README, both manifests. **No new skill, agent, hook, or dependency.**
+
 ## Phase 6 — Computer-use agents  ⬅ next (re-scoped — see below)
 **Scope correction.** The original framing — "browser/GUI automation (Playwright/Chrome) folded
 into `/verify`" — does not earn its keep as written:

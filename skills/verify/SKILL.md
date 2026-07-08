@@ -39,6 +39,20 @@ the reply is enough):
 A criterion you could not actually exercise is **FAIL**, not blank — never pass on
 assumption.
 
+## Common rationalizations (don't accept these from yourself)
+
+| Excuse | Reality |
+|--------|---------|
+| "Tests pass, so it works" | Tests prove the code does what the tests say — not what the spec says. This gate exists for the gap. |
+| "I can see from the code that AC-3 holds" | Reading code is assumption, not evidence. Run it. A criterion you didn't exercise is FAIL, not blank. |
+| "The happy path works; edge cases are covered by tests" | The spec's unhappy paths are acceptance criteria too. Drive them in the running system. |
+| "Launching the app is expensive; the diff is low-risk" | The matrix needs evidence per AC-n. "Low-risk" is a prediction; verification is an observation. |
+
+## Red flags — stop and re-check
+- A verdict says `pass` but the Evidence cell is a claim, not a command/screenshot/log.
+- Everything passed on the first run and you didn't try to break it.
+- The matrix has fewer rows than the spec has `AC-n`s.
+
 ## State
 Patch `.claude/STATE.md`: `phase: verify`, `status: done` (or `blocked`),
 `next_skill: /ship`.
