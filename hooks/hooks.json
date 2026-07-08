@@ -84,6 +84,15 @@
         "id": "post:bash:build-analysis"
       }
     ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/user-prompt-routing.js\"" }
+        ],
+        "description": "Re-inject the request→skill routing line on non-slash prompts so mid-session requests route through the pipeline (ROUTING_DISABLE=1 to turn off)",
+        "id": "user-prompt:routing"
+      }
+    ],
     "SessionStart": [
       {
         "hooks": [

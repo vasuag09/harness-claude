@@ -32,7 +32,8 @@ Thin orchestrator over the Implement skills. Requires an approved plan from
   focused on integration.
 - Files stay modular and lean (<800 lines), immutable patterns, validated inputs.
 - Compact at phase boundaries, not mid-phase.
-- Do **not** run any git command.
+- Do **not** commit or push — branch creation follows `rules/git.md`
+  (branch-at-first-write in `/harness-claude:implement`).
 
 ## Output
 Phase-by-phase summary (what was built, tests added, build status). Then hand off to

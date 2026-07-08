@@ -12,7 +12,8 @@ greenfield-shaped — it assumes you're *building*. `/harness-claude:fix` is the
 does the bug-specific work, then hands off rather than re-implementing the gates.
 
 > **Opt-in.** Invoked explicitly; nothing auto-routes a bug here. **Git boundary:** `/harness-claude:fix` never
-> commits, pushes, or branches — the fix is committed (if at all) only through `/harness-claude:ship`
+> commits or pushes — branch creation for non-trivial work is expected (`claude/fix-<slug>`, see
+> `rules/git.md`); the fix is committed (if at all) only through `/harness-claude:ship`
 > when you ask. **Reuse, don't rebuild:** the regression test goes through
 > `harness-claude:tdd-guide`; review/verify/ship are the *existing* skills, not duplicated here.
 
@@ -30,7 +31,11 @@ reproduce (RED test)  →  root cause  →  minimal fix-plan  →  hand off to /
 ```
 
 ## Do this
-1. **Reproduce first — capture the bug RED.** Before writing any fix, produce a **failing test**
+1. **Branch, then reproduce — capture the bug RED.** Apply branch-at-first-write
+   (`rules/git.md`) before the test file lands: not a git repo → skip silently; already on a
+   non-default branch → stay there; on the default branch with non-trivial work → create
+   `claude/fix-<slug>` first (never commit or push — that stays gated behind your explicit
+   ask). Then, before writing any fix, produce a **failing test**
    that exercises the reported behavior and fails for the *right* reason. Run it; confirm it's RED.
    If a reliable automated repro genuinely isn't possible (e.g. needs real hardware, an external
    outage), say *why* and record concrete **manual repro steps** instead — never skip the repro

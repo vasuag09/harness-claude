@@ -15,7 +15,7 @@ testable spec.
    - **Problem / why** — the user-visible outcome wanted.
    - **Scope** — what's in, and explicitly what's out.
    - **Acceptance criteria** — concrete, testable bullets ("given X, when Y, then Z"),
-     each with a **stable ID** (`AC-1`, `AC-2`, …). The IDs are load-bearing: `/verify`
+     each with a **stable ID** (`AC-1`, `AC-2`, …). The IDs are load-bearing: `/harness-claude:verify`
      builds its coverage matrix against them, so they must not be renumbered later. These
      become the tests in `/harness-claude:implement`.
    - **Constraints** — perf, security, compatibility, deadlines, non-functionals.

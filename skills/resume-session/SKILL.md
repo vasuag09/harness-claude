@@ -20,7 +20,7 @@ Goal: restore working context cheaply, without re-exploring.
    repeating those dead ends), and the concrete next steps.
 4. Re-orient against current reality: confirm the repo state still matches (branch, key
    files). **If STATE.md and the session narrative disagree** (e.g. `next_skill` says
-   `/implement` but the narrative describes shipping), **flag the drift and reconcile from
+   `/harness-claude:implement` but the narrative describes shipping), **flag the drift and reconcile from
    the repo** — do not trust either blindly.
 5. Propose the immediate next action (prefer STATE's `next_skill`, cross-checked against
    the narrative's "remaining"), and confirm with the user.

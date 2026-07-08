@@ -27,8 +27,9 @@ durable state file (`.claude/runs/<id>.json`) — not your context — is the so
    - **2** — fix the invocation and report; do not loop on a usage error.
 
 ## Constraints
-- **Git boundary:** never `git commit` / `push` / `branch` / `checkout -b` unless the objective
-  explicitly armed you to. A long run must not mutate history on its own.
+- **Git boundary:** never `git commit` / `git push` unless the objective explicitly armed
+  you to — a long run must not publish history on its own. Branch creation follows
+  `rules/git.md` (branch-at-first-write for non-trivial work).
 - **One increment per firing.** Correctness over coverage — the accuracy floor is never traded
   for finishing faster.
 - **Trust the state file, not memory.** Each firing may be a fresh context; read counts/budget

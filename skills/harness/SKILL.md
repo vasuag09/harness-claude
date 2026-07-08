@@ -32,7 +32,9 @@ skills don't already do.
 - Honor every HALT and CHECKPOINT — this is a guided pipeline, not an autonomous run.
 - Delegate heavy work to subagents; `/harness-claude:save-session` at each checkpoint so a long feature
   survives compaction or a new session.
-- Never run git write operations. `/harness-claude:harness-verify` ends at "ready to commit/PR."
+- Never commit or push without an explicit user ask — branch creation happens automatically
+  at first write in the Implement phase (`rules/git.md`). `/harness-claude:harness-verify`
+  ends at "ready to commit/PR."
 - For a small change, a single phase orchestrator (or atomic skill) is lighter — `/harness-claude:harness`
   is for full features.
 

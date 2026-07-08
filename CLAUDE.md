@@ -33,7 +33,7 @@ atomic skills, delegate to subagents, and halt for your input at each gate):
 
 ## What's here
 
-- **rules/** — always-on guidance (engineering, security, testing, typescript, python, workflow, agents)
+- **rules/** — always-on guidance (engineering, security, testing, typescript, python, workflow, agents, git)
 - **skills/** — the 19 pipeline drivers you invoke as `/discover`, `/spec`, `/plan`, `/plan-check`, `/review`, ...
   (incl. the **discovery entry**: `/discover` is the step *above* `/spec` — when intent is vague it
   turns it into a framed problem + one chosen direction, then hands off to `/spec`; conditional/opt-in,
@@ -61,7 +61,7 @@ atomic skills, delegate to subagents, and halt for your input at each gate):
   takes a brought signal — stack trace/log/error/issue URL — locates the failing area, shapes a
   repro seed, and routes to `/fix`; both opt-in, no new agent/dep)
 - **agents/** — 8 scoped subagents the skills delegate to
-- **hooks/** + **scripts/hooks/** — runtime automations (tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence, structural orientation, generation reduction)
+- **hooks/** + **scripts/hooks/** — runtime automations (tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence, structural orientation, generation reduction, pipeline routing)
 - **.mcp.json** — memory · sequential-thinking · magic (load only when the plugin is enabled)
 
 ## Operating principles
@@ -78,7 +78,8 @@ atomic skills, delegate to subagents, and halt for your input at each gate):
   `docs/state-and-artifacts.md`. Optional — trivial work skips it (lazy reflex).
 - **Modular & lean:** files <800 lines, immutable patterns, validated inputs.
 - **Search with mgrep, not grep.** Run long commands in tmux. Use context7 for live docs.
-- **Git boundary:** never commit/push/branch unless the user explicitly asks.
+- **Git boundary:** never commit or push without an explicit user ask; branch creation
+  for non-trivial work is expected — see `rules/git.md`.
 
 ## Release docs sweep (this repo)
 
@@ -103,3 +104,4 @@ the general principle; these are the concrete files for this plugin):
 @rules/testing.md
 @rules/typescript.md
 @rules/python.md
+@rules/git.md

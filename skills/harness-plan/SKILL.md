@@ -24,7 +24,7 @@ skills (`/harness-claude:spec`, `/harness-claude:plan`, ...) directly when you o
 
 4. **`/harness-claude:plan-check`** — gate the plan against the spec (criteria coverage, scope,
    parallel-task disjointness) before any code. **Delegate to the `harness-claude:planner` agent in a
-   read-only check pass.** Loop ≤3 revisions with `/plan` on findings.
+   read-only check pass.** Loop ≤3 revisions with `/harness-claude:plan` on findings.
    → **HALT** and show the user the checked plan for approval before any code. A standing
    Critical finding blocks the phase.
 
