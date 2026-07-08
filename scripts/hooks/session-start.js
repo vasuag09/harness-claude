@@ -3,7 +3,7 @@
 // recent session file so context can be resumed. Output goes to stdout, which
 // Claude Code adds to the session context.
 'use strict';
-const { readInput, cwdOf, stateDir, fileExists, readState, path, fs } = require('./_lib.js');
+const { readInput, cwdOf, stateDir, fileExists, readState, ROUTING_TABLE, path, fs } = require('./_lib.js');
 
 const input = readInput();
 const cwd = cwdOf(input);
@@ -43,7 +43,10 @@ if (st.phase || st.next_skill) {
   lines.push(`- previous session notes: ${resume} — run /resume-session to load them.`);
 }
 if (st.phase && resume) lines.push(`- session narrative: ${resume}`);
-lines.push('- pipeline: /spec → /research → /plan → /plan-check → /architect → /implement → /review → /security-review → /test → /verify → /ship → /refactor-clean');
+// Routing is an instruction, not a listing — it's what keeps requests flowing through
+// the pipeline on projects where the harness rules never load.
+lines.push(`- ${ROUTING_TABLE}`);
+lines.push('- pipeline order: /spec → /research → /plan → /plan-check → /architect → /implement → /review → /security-review → /test → /verify → /ship → /refactor-clean');
 
 process.stdout.write(lines.join('\n') + '\n');
 process.exit(0);

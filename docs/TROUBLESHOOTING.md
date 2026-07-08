@@ -59,9 +59,11 @@ window.
 
 ### Why didn't `/ship` commit or push?
 
-By design. The harness **never** runs `git commit`/`push`/`branch` unless you explicitly
-ask. `/ship` syncs docs and prepares a clean commit/PR summary, then stops. Run the git
-command yourself, or tell Claude to.
+By design. The harness **never** runs `git commit`/`git push` unless you explicitly ask.
+`/ship` syncs docs and prepares a clean Conventional-Commit/PR summary, then stops. Run the
+git command yourself, or tell Claude to. Branch **creation** is different: it's expected for
+non-trivial work and happens automatically at first write in `/implement`/`/fix` (see
+`rules/git.md`) — commit and push remain the only gated actions.
 
 ---
 

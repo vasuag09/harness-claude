@@ -80,10 +80,10 @@ It lives in its own repo and installs as a Claude Code **plugin/marketplace**, s
 
 | Layer | Where | Count | Role |
 |-------|-------|-------|------|
-| Rules | `rules/` | 7 | always-on guidance (cited by skills; imported by `CLAUDE.md`) |
+| Rules | `rules/` | 8 | always-on guidance incl. git conventions (cited by skills; imported by `CLAUDE.md`) |
 | Skills | `skills/<name>/SKILL.md` | 34 | 19 atomic `/discover … /ship` drivers (incl. the `/discover` vague-intent discovery entry above `/spec`, the `/plan-check` adversarial plan gate between `/plan` and `/implement`, and the `/design` + `/design-review` design altitude) + 5 phase orchestrators + 4 opt-in eval (`/eval` `/extract` `/benchmark` `/health`) + `/lazy` (generation reduction) + `/operate` (guarded long-running runs) + `/orchestrate` (multi-agent parallel fan-out) + `/fix` (bug-fix fast lane) + `/deploy` + `/observe` (release & feedback loop) |
 | Agents | `agents/*.md` | 8 | scoped subagents the skills delegate to |
-| Hooks | `hooks/hooks.json` + `scripts/hooks/` | — | tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence, structural orientation, generation reduction |
+| Hooks | `hooks/hooks.json` + `scripts/hooks/` | — | tmux, format, typecheck, quality/design gates, strategic compact, build analysis, memory persistence, structural orientation, generation reduction, pipeline routing |
 | MCPs | `.mcp.json` | 3 | memory · sequential-thinking · magic (load only when enabled) |
 
 ### The pipeline
@@ -212,6 +212,7 @@ projects, add to your `~/.claude/CLAUDE.md`:
 @/path/to/harness-claude/rules/engineering.md
 @/path/to/harness-claude/rules/security.md
 @/path/to/harness-claude/rules/testing.md
+@/path/to/harness-claude/rules/git.md
 ```
 
 ---

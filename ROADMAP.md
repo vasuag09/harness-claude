@@ -204,6 +204,29 @@ rot). **Also closes the parked Tier-2 #1** (self-eval of plans) as `/plan-check`
   new MCP server, no new runtime.** All additive — absent STATE/artifacts degrade to the old
   session-file behavior; the git boundary holds.
 
+## Git conventions & pipeline routing (v0.16.0)  ✅
+Field feedback from real multi-project use named two failures: feature work landed directly on
+`main` (the blanket "never branch" boundary lumped cheap, reversible branch *creation* in with
+commit/push), and pipeline discipline decayed after the first run (the routing lived in
+`rules/*.md`, which never load on installed projects). Prompt-only + two small hooks:
+- ✅ **`rules/git.md`** (8th rule) — researched policy: GitHub Flow, Conventional Branch v1.1.0
+  naming (`claude/<type>-<slug>` agent prefix), Conventional Commits v1.0.0, ≲400-line
+  draft-then-squash-merge PRs, and a **detect-and-follow heuristic** (the project's own
+  conventions always win). Sources cited inline.
+- ✅ **Boundary split** — reworded everywhere: `git commit`/`git push` stay absolutely gated
+  behind an explicit user ask; **branch creation is expected** — `/implement` and `/fix` create
+  `claude/feat|fix-<slug>` at first write; the `/orchestrate` lead makes one shared branch per
+  fan-out (workers never branch). Read-only skills correctly still never branch.
+- ✅ **Pipeline routing** — `session-start` now injects a request→skill routing *instruction*
+  (feature→`/spec` · bug→`/fix` · vague→`/discover` · build error→`/build-fix` ·
+  resume→`/resume-session`), and a new **`UserPromptSubmit` hook** re-injects it on every
+  non-slash prompt so mid-session requests keep routing on any installed project
+  (`ROUTING_DISABLE=1` to turn off; failure-isolated; never echoes user input).
+- **Adds (v0.16.0):** `rules/git.md`, `scripts/hooks/user-prompt-routing.js`,
+  `scripts/eval/test-user-prompt-routing-hook.sh` (32 assertions); edits to 10 skills/rules/docs +
+  `_lib.js`/`session-start.js`/`hooks.json`. Also repaired 9 pre-existing bare skill refs that had
+  broken `check-reference-integrity.sh` since v0.15.0. **No new agent, no new dependency.**
+
 ## Phase 6 — Computer-use agents  ⬅ next (re-scoped — see below)
 **Scope correction.** The original framing — "browser/GUI automation (Playwright/Chrome) folded
 into `/verify`" — does not earn its keep as written:

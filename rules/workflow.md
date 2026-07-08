@@ -33,6 +33,9 @@ user-facing surfaces. A change can need one, both, or neither; internal/CLI work
 - **Long-running commands:** run dev servers, test watchers, builds, and `docker` inside **tmux** so they survive and stream. (A hook reminds you.)
 - **Docs/API questions:** use **context7** for live library docs before answering from memory.
 - **Context hygiene:** disable unused MCPs/plugins (<10 enabled, <80 tools). Compact at logical phase boundaries, not mid-task (a hook suggests `/compact` ~every 50 tool calls).
+- **Git conventions:** `rules/git.md` is the policy — detect and follow the project's own
+  conventions first; branch-at-first-write for non-trivial work; Conventional Commits;
+  commit/push only on an explicit ask.
 
 ## Reuse-first (mandatory before writing new code)
 
@@ -87,7 +90,8 @@ platform's `/loop` + `/schedule` (a thin discipline layer — no new runtime). I
 `.claude/runs/<id>.json` — the source of truth across firings, since each firing may be a
 fresh context. Each checkpoint reuses `/health` + `/eval` so a run **can't silently drift**:
 N consecutive failing checkpoints halt it and surface the criterion. Opt-in; the git
-boundary still holds — a run never commits/pushes/branches unless explicitly armed.
+boundary still holds — a run never commits/pushes unless explicitly armed; branch creation
+follows `rules/git.md`.
 
 ## Multi-agent fan-out (opt-in)
 
@@ -96,8 +100,10 @@ subtasks), `/orchestrate` decomposes it and runs the pieces in parallel. It is t
 assigns one writer per file, **verifies the write-sets are disjoint before fanning out**, drives
 the fan-out on the platform Workflow tool, and reconciles the workers' structured summaries into
 one result. The one-writer-per-file guarantee holds by construction (assignment-by-plan, not
-isolation). Opt-in; the git boundary still holds — no worker commits/pushes/branches unless
-explicitly armed. See `rules/agents.md` for the orchestration-mode decision rule.
+isolation). Opt-in; the git boundary still holds — no worker commits/pushes unless
+explicitly armed, and workers never create branches (the lead makes one shared
+convention-named branch per `rules/git.md`). See `rules/agents.md` for the
+orchestration-mode decision rule.
 
 ## Bug-fix entry (opt-in)
 
@@ -107,7 +113,8 @@ it does the bug-specific part — **reproduce as a failing test FIRST**, name th
 **minimal** fix-plan — then hands off to the *existing* pipeline (`/implement` → `/review` +
 `/security-review` → `/verify` → `/ship`) so the fix rides the proven gates rather than duplicating
 them. Distinct from `/build-fix` (which is for build/type/compile errors, not behavioral bugs).
-Opt-in; the git boundary still holds — `/fix` never commits/pushes/branches.
+Opt-in; the git boundary still holds — `/fix` never commits/pushes; it creates its
+`claude/fix-<slug>` branch at first write per `rules/git.md`.
 
 ## Release & feedback loop (opt-in)
 
@@ -134,7 +141,8 @@ holds absolutely — `/deploy` performs no outward action without an explicit ar
 ## Don'ts
 
 - Don't skip phases. Don't start coding before a spec + plan exist for non-trivial work.
-- Don't run git commit/push/branch operations unless the user explicitly asks.
+- Don't run `git commit`/`git push` unless the user explicitly asks — branch creation for
+  non-trivial work is expected (see `rules/git.md`).
 - Don't write extracted/learned skills automatically — stage them for approval.
 - Don't let a long `/operate` run continue past a drift halt — stop, surface the failing
   criterion, and fix the cause; never bump the run id to dodge a guardrail.

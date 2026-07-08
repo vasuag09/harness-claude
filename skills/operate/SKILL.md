@@ -12,8 +12,9 @@ quietly breaking the repo. This skill is the *discipline layer*: the platform `/
 wired to the harness's own eval skills.
 
 > **Opt-in.** No default-pipeline skill or hook starts a run. Running long is always
-> explicit. **Git boundary:** a run never commits, pushes, or branches unless you
-> explicitly arm it for that in the objective.
+> explicit. **Git boundary:** a run never commits or pushes unless you explicitly arm it
+> for that in the objective; branch creation for the run's non-trivial work follows
+> `rules/git.md` (branch-at-first-write).
 
 ## How it works
 Each iteration the operator does one increment of work, then runs a **checkpoint**:

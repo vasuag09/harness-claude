@@ -12,9 +12,10 @@ is the **lead** — it decomposes the task, assigns one writer per file, dispatc
 under explicit contracts, and reconciles their structured summaries into one result.
 
 > **Opt-in.** No default-pipeline skill or hook fans out. Parallel orchestration is always
-> explicit. **Git boundary:** a run never commits, pushes, or branches unless you explicitly
-> arm it in the objective. **Token discipline:** workers return *summaries, not raw dumps*
-> (per `rules/agents.md`).
+> explicit. **Git boundary:** a run never commits or pushes unless you explicitly arm it in
+> the objective; the **lead** creates **one** shared convention-named branch for the whole
+> task before fan-out (`rules/git.md`) — workers never branch. **Token discipline:** workers
+> return *summaries, not raw dumps* (per `rules/agents.md`).
 
 This is the parallel-fan-out mode from `rules/agents.md`. Reach for it when the work is
 splittable into **3+ tasks** whose *concurrent* members have disjoint write-sets. Tasks
@@ -26,7 +27,7 @@ same batch. Only if the whole task is one unsplittable sequence is this the wron
 decompose  →  group into waves (by depends_on)  →  per wave: verify disjointness → fan out (Workflow)  →  reconcile
 ```
 1. **Decompose** the task into subtasks (`T1`, `T2`, …), each scoped to a set of files it
-   will *write* and a `depends_on` list of prior task IDs. (A `PLAN.md` from `/plan`
+   will *write* and a `depends_on` list of prior task IDs. (A `PLAN.md` from `/harness-claude:plan`
    already carries this format — see `docs/state-and-artifacts.md`.)
 2. **Assign owners** — every writable file belongs to exactly one subtask.
 3. **Group into waves** — topologically sort by `depends_on`: tasks with `depends_on: []`
@@ -43,7 +44,10 @@ decompose  →  group into waves (by depends_on)  →  per wave: verify disjoint
 1. **Write the decomposition plan** before dispatching. For each subtask: a one-line goal, its
    **owned files** (the only files it may write), its **read-only files**, its `depends_on`
    task IDs, and its tool scope (Read always; Write/Edit/Bash only over owned files). Brief each
-   worker from `worker-contract.md` — one filled instance per subtask.
+   worker from `worker-contract.md` — one filled instance per subtask. Then apply
+   branch-at-first-write (`rules/git.md`): the lead creates the task's single shared
+   `claude/<type>-<slug>` branch before dispatching wave 1 — every worker writes into it;
+   no worker creates branches of its own.
 2. **Group into waves and check each.** Topologically sort the subtasks by `depends_on` into
    waves (wave 1 = no deps; a cycle → stop and name it). Then, **for the wave you're about to
    dispatch**, list the union of its workers' write-sets: if any file appears in two sets, stop
@@ -94,8 +98,9 @@ failures — not a raw dump). A worker that cannot finish without writing outsid
 ## Security & trust
 - Workers run with your privileges and can edit files in their owned set — scope each to the
   minimum tools its subtask needs (read-only unless it owns a writable file).
-- **Git boundary holds:** no worker and no reconcile step commits/pushes/branches unless the
-  objective explicitly arms it.
+- **Git boundary holds:** no worker and no reconcile step commits or pushes unless the
+  objective explicitly arms it; workers never create branches — the lead's shared branch
+  (`rules/git.md`) is the only one.
 
 ## Notes
 - Self-contained: a skill + the `worker-contract.md` template + the existing platform Workflow

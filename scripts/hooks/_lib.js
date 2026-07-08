@@ -128,6 +128,11 @@ function appendFile(p, text) {
   try { fs.appendFileSync(p, text); return true; } catch { return false; }
 }
 
+// The request→skill routing instruction hooks inject so pipeline discipline survives
+// on installed projects (where rules/*.md never load). One line; keep it terse.
+const ROUTING_TABLE =
+  'Route the request through the harness, not ad-hoc edits: new feature/build → /spec (or /harness-plan) · bug/defect/red test → /fix · vague intent → /discover · build/type/compile error → /build-fix · resuming prior work → /resume-session.';
+
 // Emit a non-blocking note to the user/Claude (shown via stderr) and exit 0.
 function note(msg) {
   if (msg) process.stderr.write(`[harness] ${msg}\n`);
@@ -143,5 +148,5 @@ function block(msg) {
 module.exports = {
   readInput, editedFile, cwdOf, sh, has, toolCmd, fileExists,
   stateDir, todayFile, appendFile, note, block, path, fs, os,
-  stateFile, parseFrontmatter, readState,
+  stateFile, parseFrontmatter, readState, ROUTING_TABLE,
 };

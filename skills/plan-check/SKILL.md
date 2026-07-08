@@ -9,7 +9,7 @@ Goal: catch a broken plan **before** an executor acts on it. An ambiguous or inc
 plan produces an executor that guesses; parallel executors guessing differently about the
 same file produce conflicts. Cheaper to fix the plan now than to unwind code later.
 
-This is the plan-phase counterpart to `/review` — same adversarial stance, one step
+This is the plan-phase counterpart to `/harness-claude:review` — same adversarial stance, one step
 earlier. It is **read-only**: it reports, it does not edit the plan.
 
 ## Do this
@@ -30,7 +30,7 @@ earlier. It is **read-only**: it reports, it does not edit the plan.
      declaring it)? Overlapping write-sets or a missing edge is a correctness bug.
 4. Red-team it: assume the plan already failed in execution and ask why. Attack hidden
    assumptions, not just the obvious risks.
-5. If findings warrant a revision, hand them back to `/plan` and re-check — **loop ≤ 3
+5. If findings warrant a revision, hand them back to `/harness-claude:plan` and re-check — **loop ≤ 3
    times** (per rules/agents.md), then accept or escalate to the user.
 
 ## Output
@@ -38,7 +38,7 @@ A findings list, most-severe first, each with a severity:
 
 | Severity | Meaning | Action |
 |----------|---------|--------|
-| Critical | The plan **cannot** satisfy a criterion, or parallel tasks collide on a file | BLOCK — fix the plan before `/implement` |
+| Critical | The plan **cannot** satisfy a criterion, or parallel tasks collide on a file | BLOCK — fix the plan before `/harness-claude:implement` |
 | High | Likely bug or significant gap | Fix before building |
 | Medium | Maintainability / clarity concern | Fix when reasonable |
 | Low | Minor suggestion | Optional |

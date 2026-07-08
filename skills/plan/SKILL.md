@@ -15,7 +15,7 @@ Goal: a plan an executor (you or a subagent) can follow without re-deriving cont
 3. Break work into **phases/tasks**: each small, independently verifiable, with an exit check.
    Give each task an ID (`T1`, `T2`, …), its **write-set** (files it will create/edit), a
    `depends_on` list of prior task IDs, and the `AC-n` criteria it **addresses** — the
-   format `/orchestrate` and `/verify` consume (schema: `docs/state-and-artifacts.md`).
+   format `/harness-claude:orchestrate` and `/harness-claude:verify` consume (schema: `docs/state-and-artifacts.md`).
 4. Surface risks, dependencies, and ordering explicitly. **Red-team the plan before
    handing it off** — assume it already failed and ask why; attack your own draft for
    hidden assumptions and missing edge cases, not just the obvious risks. Note where

@@ -13,8 +13,8 @@
     {
       "name": "harness-claude",
       "source": "./",
-      "description": "Lean full-SDLC harness: 7 rules, 34 skills, 8 agents, runtime hooks, memory persistence, a vague-intent discovery entry above /spec, a durable STATE spine + per-phase disk artifacts, an adversarial /plan-check gate, dependency-wave parallel fan-out, coverage-matrix verify, a product/UX + system design altitude, benchmark-gated cost/token optimization, guarded long-running agent runs, a bug-fix fast lane, and a release & feedback loop (deploy + observe) for TypeScript/JS and Python.",
-      "version": "0.15.0",
+      "description": "Lean full-SDLC harness: 8 rules, 34 skills, 8 agents, runtime hooks, memory persistence, researched git conventions (branch-at-first-write + Conventional Commits + detect-and-follow), always-on pipeline routing, a vague-intent discovery entry above /spec, a durable STATE spine + per-phase disk artifacts, an adversarial /plan-check gate, dependency-wave parallel fan-out, coverage-matrix verify, a product/UX + system design altitude, benchmark-gated cost/token optimization, guarded long-running agent runs, a bug-fix fast lane, and a release & feedback loop (deploy + observe) for TypeScript/JS and Python.",
+      "version": "0.16.0",
       "author": {
         "name": "Vasu Agrawal",
         "email": "vasuagrawal1040@gmail.com"

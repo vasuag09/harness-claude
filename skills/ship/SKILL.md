@@ -37,9 +37,15 @@ performing git actions you didn't ask for.
    no debug logs, no `--no-verify`.
 
 ## Git boundary (important)
-Do **not** run `git commit`, `git push`, branch, or open a PR unless the user explicitly
-asks. Prepare the message and report "ready to commit/PR — say the word." If asked,
-follow conventional-commit format and push with `-u` for new branches.
+Do **not** run `git commit`, `git push`, or open a PR unless the user explicitly asks — and
+create no new branches here (the feature branch already exists, made at first write per
+`rules/git.md`). Prepare, then stop:
+- **Commit message** in Conventional Commits v1.0.0 form: `type(scope): imperative subject
+  ≤72 chars`, `BREAKING CHANGE:` footer when applicable (see `rules/git.md`).
+- **PR path**: push the feature branch with `-u`, open the PR (draft until verify passed),
+  **squash-merge by default** — merge-commit only if the project's own history shows
+  non-squash merges.
+- Report "ready to commit/PR — say the word."
 
 ## Exit criterion
 Docs synced, summary drafted, checks green. Awaiting the user's go for any git action.

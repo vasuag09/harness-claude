@@ -8,25 +8,30 @@ description: Execute a plan via test-driven development — write tests first, t
 Goal: turn the plan into working, tested, clean code — one phase at a time.
 
 ## Do this
-1. Take the plan's tasks in order — read `.claude/planning/<slug>/PLAN.md` if present (slug
+1. **Branch first (non-trivial work).** Apply branch-at-first-write (`rules/git.md`): not a
+   git repo → skip silently; already on a non-default branch → stay there; on the default
+   branch (main/master/develop, or what `git symbolic-ref refs/remotes/origin/HEAD` resolves
+   to) → create `claude/feat-<slug>` (slug from `.claude/STATE.md`) **before** the first
+   file edit. Never commit or push — that stays gated behind the user's explicit ask.
+2. Take the plan's tasks in order — read `.claude/planning/<slug>/PLAN.md` if present (slug
    in `.claude/STATE.md`) so a fresh-context executor works from the file, not the
    conversation. For each task/phase:
    - **Delegate to `harness-claude:tdd-guide`** (or run TDD inline): write a failing test against an
      acceptance criterion (RED) → minimum code to pass (GREEN) → refactor.
    - Keep files modular and lean (<800 lines), immutable patterns, inputs validated.
    - Let the format/typecheck hooks run; fix what they flag immediately.
-2. **Parallel-fan-out checkpoint — evaluate before editing, don't skip.** Before you start
+3. **Parallel-fan-out checkpoint — evaluate before editing, don't skip.** Before you start
    editing a phase serially, count the files it will *write*. If it spans **3+ independent files
    with disjoint write-sets and no dependency between them** (the plan may already flag this
-   phase as a `/orchestrate` candidate), you **must** surface the fan-out option: name the file
+   phase as a `/harness-claude:orchestrate` candidate), you **must** surface the fan-out option: name the file
    split and propose `/harness-claude:orchestrate`, then let the user choose before proceeding.
    Surfacing the offer is **mandatory whenever the trigger fires** — that is the only path by
    which parallel mode ever gets used; what stays **opt-in is *acting* on it** — never silently
    start a multi-agent run (it spawns workers and costs more tokens). If the trigger doesn't fire,
    note that in one line and edit serially.
-3. After each phase, confirm its exit check (test green, build clean) before moving on.
-4. If the build breaks and the fix is non-obvious, hand off to `/harness-claude:build-fix`.
-5. Stay inside the plan. If reality diverges from it, stop, update the plan, then resume
+4. After each phase, confirm its exit check (test green, build clean) before moving on.
+5. If the build breaks and the fix is non-obvious, hand off to `/harness-claude:build-fix`.
+6. Stay inside the plan. If reality diverges from it, stop, update the plan, then resume
    — don't silently improvise scope.
 
 ## Token discipline

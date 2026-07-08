@@ -34,8 +34,9 @@ and dependency-free.
 | `post:edit:design-quality` | PostToolUse | `Edit`/`Write`/`MultiEdit` | Warns when frontend edits drift toward generic template UI | — |
 | `post:edit:strategic-compact` | PostToolUse | `Edit`/`Write`/`MultiEdit` | Suggests `/compact` at logical intervals (~every 50 edits) | — |
 | `post:bash:build-analysis` | PostToolUse | `Bash` | Background, non-blocking analysis after build commands | — |
-| `session-start:load-context` | SessionStart | session start | Surfaces the STATE.md spine's `next_skill` (or the previous-session pointer if no STATE.md); detects package manager | — |
+| `session-start:load-context` | SessionStart | session start | Surfaces the STATE.md spine's `next_skill` (or the previous-session pointer if no STATE.md); injects the request→skill **routing instruction** (feature→`/spec`, bug→`/fix`, …); detects package manager | — |
 | `session-start:lazy-activate` | SessionStart | session start | Activates `/lazy` generation-reduction — injects the "build the minimum that works" ladder as `additionalContext` (reversible: `LAZY_DISABLE=1` / `LAZY_MODE=off`); see note below | — |
+| `user-prompt:routing` | UserPromptSubmit | every non-slash prompt | Re-injects the one-line request→skill routing instruction so mid-session requests route through the pipeline (reversible: `ROUTING_DISABLE=1`); see note below | — |
 | `pre-compact:save-state` | PreCompact | before compaction | Saves a state snapshot so context isn't lost | — |
 | `stop:session-summary` | Stop | session end (tree changed) | Persists a session-end snapshot; refreshes the STATE.md spine's `updated:` timestamp when present | git |
 | `stop:pattern-extraction` | Stop | session end (substantial) | Reads the day's run-trace; stages a candidate note when a tool/skill sequence recurred (run `/extract` to act on it) | trace present |
@@ -94,6 +95,26 @@ local text block (or a built-in fallback) and emits it. No persistent context ta
 **Turn it off / tune it** without touching `hooks.json`: `LAZY_DISABLE=1` (off entirely) or `LAZY_MODE=off`;
 `LAZY_MODE=lite|full|ultra` selects intensity (default `full`). Or remove its block from `hooks.json`
 (id `session-start:lazy-activate`). The `/lazy` skill switches intensity mid-session; "stop lazy" reverts.
+
+## Pipeline routing (`user-prompt:routing` + `session-start:load-context`) — honest framing
+
+The pipeline discipline lives in `rules/*.md`, which only load in the harness's own repo — on
+projects where the plugin is installed, nothing else tells the agent to route a "now change X"
+request through `/spec`, a bug through `/fix`, or a vague ask through `/discover`. These two
+injections are that routing: session-start states it once, and `user-prompt:routing` re-states
+it on every **non-slash** prompt so it survives long sessions.
+
+**Cost & behavior:** one short line per prompt (~30 tokens), no subprocess, no network. It
+no-ops for `/`-prefixed prompts (you already picked a skill) and for empty prompts. On the very
+first prompt of a session you'll see it back-to-back with the session-start line — known,
+accepted redundancy. Sessions already running when the plugin updates won't load it until the
+next session (hooks load at session start).
+
+**Turn it off:** `ROUTING_DISABLE=1`, or remove the `user-prompt:routing` block from `hooks.json`.
+
+**Note on old spec docs:** historical `docs/specs/v0.X-*.md` files still describe the pre-v0.16
+blanket "never commit/push/branch" boundary — they're frozen release snapshots. Current policy
+lives in `rules/git.md` (branching expected; commit/push gated).
 
 ## Performance note
 
